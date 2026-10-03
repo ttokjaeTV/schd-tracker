@@ -220,7 +220,10 @@ def fill_fx(divs):
 # ---------------------------------------------------------------- 구성종목
 def update_holdings(force=False):
     h = load("holdings")
-    if not force and (TODAY - dt.date.fromisoformat(h["asOf"])).days < 6:
+    # Schwab은 GitHub 서버 접속을 막는 경우가 많다(403). 실패해도 이슈를 만들지 않고,
+    # 30일이 지나도록 못 받았을 때만 '확인 필요'로 알린다.
+    age = (TODAY - dt.date.fromisoformat(h["asOf"])).days
+    if not force and age < 6:
         return
     try:
         page = get(SCHWAB_PAGE).text
@@ -244,7 +247,8 @@ def update_holdings(force=False):
         save("holdings", dict(asOf=as_of, source=h["source"], items=items))
         changed.append("holdings")
     except Exception as e:  # noqa: BLE001
-        errors.append(f"구성종목 수집 실패: {e}")
+        msg = f"구성종목 수집 실패: {e} (현재 데이터 기준일 {h['asOf']}, {age}일 경과)"
+        (errors if age >= 30 else notes).append(msg)
 
 
 # ---------------------------------------------------------------- 국내 SCHD형 ETF
