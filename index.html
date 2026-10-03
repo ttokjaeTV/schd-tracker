@@ -79,9 +79,28 @@ tr.ref td{background:var(--accent-soft)}
 .notes{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:16px}
 .notes p{margin:0;max-width:72ch}
 .notes a{color:var(--accent)}
-.hold{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:16px;align-items:start}
+.hold{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:16px;align-items:stretch}
 @media (max-width:720px){.hold{grid-template-columns:1fr}}
-.donut-wrap{display:flex;justify-content:center} .donut-wrap svg{width:100%;max-width:300px;height:auto}
+.donut-wrap{display:flex;align-items:center;justify-content:center} .donut-wrap svg{width:100%;max-width:300px;height:auto}
+.ahbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px}
+.htoggle{display:block;width:100%;margin-top:12px;padding:9px 12px;font:inherit;font-size:14px;font-weight:600;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.htoggle:hover{border-color:var(--muted)}
+.htoggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hold.open{align-items:start}
+.hold.open .donut-wrap{position:sticky;top:16px}
+.ahbar input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);min-width:0;flex:1 1 220px;max-width:340px}
+.ahbar input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.htable{table-layout:fixed}
+.htable th,.htable td{text-align:left;vertical-align:middle}
+.htable th:nth-child(1),.htable td:nth-child(1){width:52px;text-align:center}
+.htable th:nth-child(3),.htable td:nth-child(3){width:28%}
+.htable th:nth-child(4),.htable td:nth-child(4){width:84px;text-align:right}
+.htable td:nth-child(2){white-space:normal}
+.htable .tk{color:var(--muted);font-size:12px;margin-left:6px}
+.htable .sw{flex:none}
+.htable .nm{display:flex;align-items:center;gap:0}
+.htable tr.other td{color:var(--muted)}
+.htable tr.other td:nth-child(4){color:var(--ink)}
 .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
 tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 .sectors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px}
@@ -181,7 +200,11 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
     <div class="sec-head"><h2>구성종목 TOP 10</h2><span class="cap" id="holdAsOf"></span></div>
     <div class="hold">
       <div class="panel donut-wrap"><svg id="donut" viewBox="0 0 300 300" role="img" aria-label="SCHD 상위 10종목과 기타 비중 도넛 차트"></svg></div>
-      <div class="panel scroll"><table id="holdTable"></table></div>
+      <div class="panel">
+        <div class="ahbar" id="ahbar" hidden><label for="ahq" class="cap">검색</label><input id="ahq" type="search" placeholder="종목명·티커·섹터 (예: 펩시, HD, 금융)"><span class="cap" id="ahcnt"></span></div>
+        <div class="scroll"><table id="holdTable" class="htable"></table></div>
+        <button type="button" class="htoggle" id="hToggle" aria-expanded="false"></button>
+      </div>
     </div>
     <div class="panel"><div class="sec-head" style="margin-bottom:10px"><h2 style="font-size:15px">섹터 비중</h2><span class="cap">전체 보유 종목 기준</span></div><div id="sectors" class="sectors"></div></div>
   </section>
@@ -457,11 +480,36 @@ drawQ();
     a0=a1;});
   s+=`<text x="${cx}" y="${cy-14}" text-anchor="middle" font-size="12">TOP 10</text><text x="${cx}" y="${cy+8}" text-anchor="middle" font-size="22" font-weight="600" style="fill:var(--ink)">${topSum.toFixed(2)}%</text><text x="${cx}" y="${cy+26}" text-anchor="middle" font-size="11">기타 ${other.toFixed(2)}% · 합계 100%</text>`;
   $('donut').innerHTML=s;
-  let h=`<thead><tr><th>순위</th><th>종목</th><th>섹터</th><th>비중</th></tr></thead><tbody>`;
-  segs.forEach((g,i)=>{h+= i<10?`<tr><td class="num">${i+1}</td><td><span class="sw" style="background:${g.c}"></span>${g.n} <span class="cap num">${g.k}</span></td><td>${g.sec}</td><td class="num">${g.v.toFixed(2)}%</td></tr>`
-    :`<tr><td></td><td><span class="sw" style="background:${g.c}"></span>기타 <span class="cap">${g.n}</span></td><td></td><td class="num">${g.v.toFixed(2)}%</td></tr>`;});
-  h+=`<tr class="sum"><td></td><td>합계</td><td></td><td class="num">100.00%</td></tr></tbody>`;
-  $('holdTable').innerHTML=h;
+  // 표: 평소엔 TOP10 + 기타, 펼치면 전체 종목
+  const stocks=hs.filter(x=>x[3]!=='현금·선물'), cash=hs.filter(x=>x[3]==='현금·선물');
+  const color=k=>{const i=top.findIndex(x=>x[0]===k);return i>=0?`var(--p${i+1})`:'var(--other)';};
+  const row=(rank,x)=>`<tr><td class="num">${rank}</td><td><span class="nm"><span class="sw" style="background:${color(x[0])}"></span>${x[2]}<span class="tk">${x[0]}</span></span></td><td>${x[3]}</td><td class="num">${x[1].toFixed(2)}%</td></tr>`;
+  const head=`<thead><tr><th>순위</th><th>종목</th><th>섹터</th><th>비중</th></tr></thead><tbody>`;
+  const sumRow=v=>`<tr class="sum"><td></td><td>합계</td><td></td><td class="num">${v}</td></tr>`;
+  let open=false;
+  const render=()=>{
+    let h=head;
+    if(!open){
+      top.forEach((x,i)=>{h+=row(i+1,[x[0],topR[i],x[2],x[3]]);});
+      h+=`<tr class="other"><td>–</td><td><span class="nm"><span class="sw" style="background:var(--other)"></span>기타<span class="tk">나머지 ${stocks.length-10}종목·현금</span></span></td><td>–</td><td class="num">${other.toFixed(2)}%</td></tr>`+sumRow('100.00%');
+      $('ahcnt').textContent='';
+    }else{
+      const q=($('ahq').value||'').trim().toLowerCase();
+      const list=stocks.map((x,i)=>[i+1,x]).concat(cash.map(x=>['–',x])).filter(([,x])=>!q||[x[0],x[2],x[3]].some(v=>String(v).toLowerCase().includes(q)));
+      list.forEach(([r,x])=>{h+=row(r,x);});
+      if(!list.length) h+=`<tr><td></td><td class="cap">‘${q}’에 맞는 종목이 없습니다</td><td></td><td></td></tr>`;
+      else if(!q) h+=sumRow(hs.reduce((s,x)=>s+x[1],0).toFixed(2)+'%');
+      $('ahcnt').textContent=q?`${list.length}건`:'';
+    }
+    $('holdTable').innerHTML=h+'</tbody>';
+    const b=$('hToggle'); b.setAttribute('aria-expanded',open);
+    b.textContent=open?'TOP 10만 보기 ▴':`전체 ${stocks.length}종목 펼치기 ▾${cash.length?` (현금·선물 ${cash.length}건 포함)`:''}`;
+    $('ahbar').hidden=!open;
+    const hold=document.querySelector('.hold'); if(hold&&hold.classList) hold.classList.toggle('open',open);
+  };
+  $('hToggle').addEventListener('click',()=>{open=!open; if(!open)$('ahq').value=''; render();});
+  $('ahq').addEventListener('input',render);
+  render();
   const sec={};HOLD.forEach(x=>{sec[x[3]]=(sec[x[3]]||0)+x[1];});
   const ss=Object.entries(sec).sort((a,b)=>b[1]-a[1]), mx=ss[0][1];
   $('sectors').innerHTML=ss.map(([k,v])=>`<div class="srow"><span>${k}</span><span class="trk"><span class="fil" style="display:block;width:${(v/mx*100).toFixed(1)}%"></span></span><span class="pv">${v.toFixed(2)}%</span></div>`).join('');
