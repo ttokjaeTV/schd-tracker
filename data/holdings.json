@@ -1,0 +1,618 @@
+{
+ "asOf": "2026-10-01",
+ "source": "Schwab Asset Management SCHD_FundHoldings CSV",
+ "items": [
+  {
+   "symbol": "TXN",
+   "weight": 4.689642,
+   "name": "TEXAS INSTRUMENT INC",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "QCOM",
+   "weight": 4.550867,
+   "name": "QUALCOMM",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "CVX",
+   "weight": 4.15384,
+   "name": "CHEVRON",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "KO",
+   "weight": 4.144697,
+   "name": "COCA-COLA",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "PG",
+   "weight": 4.141545,
+   "name": "PROCTER & GAMBLE",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "MRK",
+   "weight": 4.028375,
+   "name": "MERCK & CO INC",
+   "sector": "Health Care"
+  },
+  {
+   "symbol": "COP",
+   "weight": 3.92874,
+   "name": "CONOCOPHILLIPS",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "AMGN",
+   "weight": 3.906517,
+   "name": "AMGEN INC",
+   "sector": "Health Care"
+  },
+  {
+   "symbol": "VZ",
+   "weight": 3.889085,
+   "name": "VERIZON COMMUNICATIONS INC",
+   "sector": "Communication Services"
+  },
+  {
+   "symbol": "UNH",
+   "weight": 3.881456,
+   "name": "UNITEDHEALTH GROUP",
+   "sector": "Health Care"
+  },
+  {
+   "symbol": "PEP",
+   "weight": 3.796702,
+   "name": "PEPSICO",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "HD",
+   "weight": 3.766936,
+   "name": "HOME DEPOT",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "ABT",
+   "weight": 3.717853,
+   "name": "ABBOTT LABORATORIES",
+   "sector": "Health Care"
+  },
+  {
+   "symbol": "ACN",
+   "weight": 3.34379,
+   "name": "ACCENTURE PLC CLASS A",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "BMY",
+   "weight": 3.231321,
+   "name": "BRISTOL MYERS SQUIBB",
+   "sector": "Health Care"
+  },
+  {
+   "symbol": "MO",
+   "weight": 2.877269,
+   "name": "ALTRIA GROUP INC",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "ADP",
+   "weight": 2.698947,
+   "name": "AUTOMATIC DATA PROCESSING INC",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "LMT",
+   "weight": 2.642419,
+   "name": "LOCKHEED MARTIN CORP",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "BX",
+   "weight": 2.168454,
+   "name": "BLACKSTONE",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "CMCSA",
+   "weight": 1.976715,
+   "name": "COMCAST CLASS A",
+   "sector": "Communication Services"
+  },
+  {
+   "symbol": "EOG",
+   "weight": 1.907754,
+   "name": "EOG RESOURCES",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "SLB",
+   "weight": 1.858779,
+   "name": "SLB",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "TGT",
+   "weight": 1.831834,
+   "name": "TARGET CORP",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "UPS",
+   "weight": 1.810852,
+   "name": "UNITED PARCEL SERVICE INC CLASS B",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "FAST",
+   "weight": 1.483377,
+   "name": "FASTENAL",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "OKE",
+   "weight": 1.414139,
+   "name": "ONEOK",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "DVN",
+   "weight": 1.335199,
+   "name": "DEVON ENERGY",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "F",
+   "weight": 1.236943,
+   "name": "FORD MOTOR",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "FITB",
+   "weight": 1.176663,
+   "name": "FIFTH THIRD BANCORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "ADM",
+   "weight": 0.986432,
+   "name": "ARCHER DANIELS MIDLAND",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "PAYX",
+   "weight": 0.83084,
+   "name": "PAYCHEX",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "KMB",
+   "weight": 0.807549,
+   "name": "KIMBERLY CLARK",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "ARES",
+   "weight": 0.671941,
+   "name": "ARES MANAGEMENT CLASS A",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "CINF",
+   "weight": 0.640636,
+   "name": "CINCINNATI FINANCIAL",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "HSY",
+   "weight": 0.599892,
+   "name": "HERSHEY FOODS",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "RF",
+   "weight": 0.591158,
+   "name": "REGIONS FINANCIAL",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "TROW",
+   "weight": 0.581045,
+   "name": "T ROWE PRICE GROUP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "DRI",
+   "weight": 0.576899,
+   "name": "DARDEN RESTAURANTS INC",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "PFG",
+   "weight": 0.562849,
+   "name": "PRINCIPAL FINANCIAL GROUP INC",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "SNA",
+   "weight": 0.489553,
+   "name": "SNAP ON INC",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "BR",
+   "weight": 0.472924,
+   "name": "BROADRIDGE FINANCIAL SOLUTIONS INC",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "DINO",
+   "weight": 0.448701,
+   "name": "HF SINCLAIR",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "BBY",
+   "weight": 0.447243,
+   "name": "BEST BUY",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "EWBC",
+   "weight": 0.440891,
+   "name": "EAST WEST BANCORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "GIS",
+   "weight": 0.435831,
+   "name": "GENERAL MILLS INC",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "APA",
+   "weight": 0.390923,
+   "name": "APA",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "WSO",
+   "weight": 0.275943,
+   "name": "WATSCO",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "FNF",
+   "weight": 0.256199,
+   "name": "FIDELITY NATIONAL FINANCIAL INC",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "AFG",
+   "weight": 0.244807,
+   "name": "AMERICAN FINANCIAL GROUP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "BAH",
+   "weight": 0.217929,
+   "name": "BOOZ ALLEN HAMILTON HOLDING CLASS",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "ORI",
+   "weight": 0.214108,
+   "name": "OLD REPUBLIC INTERNATIONAL",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "COLB",
+   "weight": 0.208978,
+   "name": "COLUMBIA BANKING SYSTEM INC",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "ALV",
+   "weight": 0.193713,
+   "name": "AUTOLIV",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "M",
+   "weight": 0.153933,
+   "name": "MACYS INC",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "MSM",
+   "weight": 0.151286,
+   "name": "MSC INDUSTRIAL CLASS A",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "ERIE",
+   "weight": 0.147593,
+   "name": "ERIE INDEMNITY CLASS A",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "MUR",
+   "weight": 0.129838,
+   "name": "MURPHY OIL CORP",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "MTN",
+   "weight": 0.127291,
+   "name": "VAIL RESORTS",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "OZK",
+   "weight": 0.120809,
+   "name": "BANK OZK",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "NXST",
+   "weight": 0.118088,
+   "name": "NEXSTAR MEDIA GROUP INC",
+   "sector": "Communication Services"
+  },
+  {
+   "symbol": "MC",
+   "weight": 0.108472,
+   "name": "MOELIS CLASS A",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "FHI",
+   "weight": 0.102751,
+   "name": "FEDERATED HERMES INC CLASS B",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "RHI",
+   "weight": 0.09775,
+   "name": "ROBERT HALF INC",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "KFY",
+   "weight": 0.095537,
+   "name": "KORN FERRY",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "CVBF",
+   "weight": 0.09462,
+   "name": "CVB FINANCIAL CORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "PAG",
+   "weight": 0.092405,
+   "name": "PENSKE AUTOMOTIVE GROUP VOTING INC",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "GVMXX",
+   "weight": 0.091473,
+   "name": "SSC GOVERNMENT MM GVMXX",
+   "sector": ""
+  },
+  {
+   "symbol": "CWEN",
+   "weight": 0.090782,
+   "name": "CLEARWAY ENERGY INC CLASS C",
+   "sector": "Utilities"
+  },
+  {
+   "symbol": "APAM",
+   "weight": 0.065981,
+   "name": "ARTISAN PARTNERS ASSET MANAGEMENT",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "BANR",
+   "weight": 0.058686,
+   "name": "BANNER CORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "OFG",
+   "weight": 0.055301,
+   "name": "OFG BANCORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "CNS",
+   "weight": 0.053387,
+   "name": "COHEN & STEERS INC",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "IPAR",
+   "weight": 0.052716,
+   "name": "INTERPARFUMS INC",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "CHCO",
+   "weight": 0.05129,
+   "name": "CITY HOLDING",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "MZTI",
+   "weight": 0.050094,
+   "name": "MARZETTI",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "AGM",
+   "weight": 0.050039,
+   "name": "FEDERAL AGRICULTURAL MORTGAGE NON",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "WU",
+   "weight": 0.048538,
+   "name": "WESTERN UNION",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "GABC",
+   "weight": 0.047423,
+   "name": "GERMAN AMERICAN BANCORP INC",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "NSP",
+   "weight": 0.044892,
+   "name": "INSPERITY",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "STBA",
+   "weight": 0.044695,
+   "name": "S AND T BANCORP INC",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "NBHC",
+   "weight": 0.04463,
+   "name": "NATIONAL BANK HOLDINGS CORP CLASS",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "SRCE",
+   "weight": 0.039593,
+   "name": "1ST SOURCE",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "LKFN",
+   "weight": 0.037345,
+   "name": "LAKELAND FINANCIAL CORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "BKE",
+   "weight": 0.033876,
+   "name": "BUCKLE",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "FLO",
+   "weight": 0.030432,
+   "name": "FLOWERS FOODS INC",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "PFBC",
+   "weight": 0.029856,
+   "name": "PREFERRED BANK",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "WEN",
+   "weight": 0.025899,
+   "name": "WENDYS",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "CNA",
+   "weight": 0.025696,
+   "name": "CNA FINANCIAL CORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "CPF",
+   "weight": 0.023903,
+   "name": "CENTRAL PACIFIC FINANCIAL CORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "HAFC",
+   "weight": 0.02375,
+   "name": "HANMI FINANCIAL CORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "ORRF",
+   "weight": 0.021093,
+   "name": "ORRSTOWN FINANCIAL SERVICES INC",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "VRTS",
+   "weight": 0.020989,
+   "name": "VIRTUS INVESTMENT PARTNERS",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "IBCP",
+   "weight": 0.020419,
+   "name": "INDEPENDENT BANK CORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "THFF",
+   "weight": 0.020392,
+   "name": "FIRST FINANCIAL CORPORATION CORP",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "CCBG",
+   "weight": 0.017257,
+   "name": "CAPITAL CITY BANK INC",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "USD",
+   "weight": 0.016242,
+   "name": "US DOLLAR",
+   "sector": ""
+  },
+  {
+   "symbol": "EBF",
+   "weight": 0.013912,
+   "name": "ENNIS INC",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "AMSF",
+   "weight": 0.011337,
+   "name": "AMERISAFE INC",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "ETD",
+   "weight": 0.010918,
+   "name": "ETHAN ALLEN INTERIORS",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "OXM",
+   "weight": 0.009104,
+   "name": "OXFORD INDUSTRIES INC",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "FAZ6",
+   "weight": 0.0,
+   "name": "S&P MID 400 EMINI DEC 26",
+   "sector": ""
+  },
+  {
+   "symbol": "DMZ6",
+   "weight": 0.0,
+   "name": "DJIA MINI e-CBOT DEC 26",
+   "sector": ""
+  }
+ ]
+}

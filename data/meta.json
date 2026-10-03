@@ -1,0 +1,52 @@
+{
+ "updated": "2026-10-03",
+ "splits": [
+  {
+   "date": "2024-10-11",
+   "ratio": 3
+  }
+ ],
+ "names_ko": {
+  "TXN": "텍사스 인스트루먼트",
+  "QCOM": "퀄컴",
+  "CVX": "셰브론",
+  "KO": "코카콜라",
+  "PG": "프록터앤드갬블",
+  "MRK": "머크",
+  "COP": "코노코필립스",
+  "AMGN": "암젠",
+  "VZ": "버라이즌",
+  "UNH": "유나이티드헬스",
+  "PEP": "펩시코",
+  "HD": "홈디포",
+  "ABT": "애보트",
+  "ACN": "액센츄어",
+  "BMY": "브리스톨마이어스스퀴브",
+  "MO": "알트리아",
+  "ADP": "ADP",
+  "LMT": "록히드마틴",
+  "BX": "블랙스톤",
+  "CMCSA": "컴캐스트",
+  "EOG": "EOG 리소시스",
+  "SLB": "SLB",
+  "TGT": "타깃",
+  "UPS": "UPS",
+  "FAST": "패스널"
+ },
+ "sectors_ko": {
+  "Consumer Staples": "필수소비재",
+  "Health Care": "헬스케어",
+  "Energy": "에너지",
+  "Information Technology": "정보기술",
+  "Industrials": "산업재",
+  "Financials": "금융",
+  "Consumer Discretionary": "경기소비재",
+  "Communication Services": "커뮤니케이션",
+  "Utilities": "유틸리티",
+  "Real Estate": "부동산",
+  "Materials": "소재",
+  "": "현금·선물"
+ },
+ "withholding": 0.15,
+ "schd_fee": 0.0006
+}
