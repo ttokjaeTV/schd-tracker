@@ -11,6 +11,7 @@ GitHub Actions가 매일 새 데이터를 확인해 자동으로 갱신합니다
 | `data/dividends.json` | SCHD 배당 (배당락일·기준일·지급일·공시 금액·배당락일 종가·지급일 환율·출처) |
 | `data/holdings.json` | 구성종목 전체 목록 (Schwab 공시) |
 | `data/kr_etf.json` | 국내 SCHD형 ETF 4종 분배 이력, 총보수 |
+| `data/prices.json` | SCHD 일별 종가·배당 재투자 수정주가 (2011-10 상장 이후 전체) |
 | `data/meta.json` | 갱신일, 주식분할 이력, 한글 종목명·섹터명, 원천징수율 |
 | `downloads/schd_dividend_tracker.xlsx` | 엑셀 마스터 (데이터가 바뀔 때마다 자동 생성) |
 | `scripts/update.py` | 데이터 수집·검증 |
@@ -21,6 +22,7 @@ GitHub Actions가 매일 새 데이터를 확인해 자동으로 갱신합니다
 
 - **SCHD 배당**: Schwab 공식 분배 CSV → 막히면 stockanalysis(예비, 2026-10 첫 실행 기준 GitHub 서버에서는 Schwab이 막혀 예비 출처로 동작). 새 배당이 직전 대비 ±40% 넘게 다르면 반영하지 않고 이슈로 알림
 - **배당락일 종가**: Yahoo Finance (분할 반영, 배당 미조정 종가)
+- **주가 흐름**: Yahoo Finance 전체 이력을 7일마다(새 배당 반영 시엔 즉시) 통째로 다시 받음
 - **지급일 환율**: 하나은행 매매기준율(다음금융). 지급일이 지나야 채워짐
 - **구성종목**: Schwab 보유종목 CSV, 6일 이상 지났을 때만 확인. Schwab이 GitHub 서버 접속을 막으면(403) 기존 데이터를 유지하고, 30일 넘게 못 받으면 `확인 필요` 이슈로 알림
 - **국내 SCHD형 분배금**: FunETF 분배 이력

@@ -4,9 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>SCHD 배당 트래커</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
 /* Layout: 한 열 대시보드 — 요약 숫자 → 연간 막대 → 분기 격자 → 국내 SCHD형 비교 → 출처 */
@@ -15,8 +14,8 @@ html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!i
   --accent:#A8661B; --accent-soft:#F6E9D7; --bar:#C98A3A; --bar-partial:#E7C79E; --est:#F3E3CB; --est-line:#A8661B; --avg:#2F5D8A; --other:#CBD3D8;
   --p1:#A8661B; --p2:#C98A3A; --p3:#E0B36A; --p4:#2F5D8A; --p5:#4F7FAF; --p6:#86A9CC; --p7:#17784A; --p8:#4E9E72; --p9:#8CC3A2; --p10:#7A5C8E;
   --up:#17784A; --up-soft:#E2F2E9; --down:#B4322B; --down-soft:#F8E4E2;
-  --f-body:"IBM Plex Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
-  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --f-body:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-num:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#11181D; --surface:#182229; --ink:#E6ECEF; --muted:#94A4AE; --line:#2A3740; --soft:#1E2A32;
@@ -27,7 +26,7 @@ html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!i
   --accent:#E3A55A; --accent-soft:#3A2C1B; --bar:#D79A4E; --bar-partial:#6B5132; --est:#3A2E20; --est-line:#E3A55A; --avg:#8DB4DE; --other:#3A4852;
   --up:#5CC48D; --up-soft:#173327; --down:#F0867E; --down-soft:#3B1E1C; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.005em}
 .wrap{max-width:1040px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:flex;flex-direction:column;gap:28px}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:14px}
 h1{font-size:30px;line-height:1.15;margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
@@ -44,7 +43,7 @@ h2{font-size:18px;margin:0;font-weight:700;letter-spacing:-.01em;text-wrap:balan
 @media (max-width:760px){.hero{grid-template-columns:1fr}}
 .latest{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
 .latest .lbl{font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:600}
-.big{font-family:var(--f-num);font-size:44px;font-weight:600;line-height:1;letter-spacing:-.02em}
+.big{font-family:var(--f-num);font-size:46px;font-weight:700;line-height:1;letter-spacing:-.02em}
 .big span{font-size:16px;color:var(--muted);font-weight:500;margin-left:6px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{font-size:13px;padding:3px 10px;border-radius:999px;background:var(--soft);color:var(--ink);white-space:nowrap}
@@ -55,13 +54,13 @@ h2{font-size:18px;margin:0;font-weight:700;letter-spacing:-.01em;text-wrap:balan
 .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .stat{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
 .stat .t{font-size:12px;color:var(--muted)}
-.stat .v{font-family:var(--f-num);font-size:22px;font-weight:600;line-height:1.2}
+.stat .v{font-family:var(--f-num);font-size:24px;font-weight:700;line-height:1.2}
 .stat .s{font-size:12px;color:var(--muted)}
 .v.up{color:var(--up)} .v.down{color:var(--down)}
 /* chart */
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-svg text{font-family:var(--f-num);fill:var(--muted)}
+svg text{font-family:var(--f-num);fill:var(--muted);font-variant-numeric:tabular-nums;font-weight:500}
 /* tables */
 table{border-collapse:collapse;width:100%;font-size:14px}
 th{font-size:12px;font-weight:600;color:var(--muted);text-align:right;padding:8px 10px;border-bottom:1px solid var(--ink);white-space:nowrap}
@@ -90,6 +89,11 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 .srow{display:grid;grid-template-columns:96px minmax(0,1fr) 56px;gap:8px;align-items:center;font-size:13px}
 .srow .trk{height:8px;background:var(--soft);border-radius:4px;overflow:hidden} .srow .fil{height:100%;background:var(--bar)}
 .srow .pv{font-family:var(--f-num);text-align:right}
+.pstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px}
+@media (max-width:640px){.pstats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pstats div{min-width:0} .pstats dt{font-size:12px;color:var(--muted)} .pstats dd{margin:2px 0 0;font-family:var(--f-num);font-size:17px;font-weight:600}
+.pstats dd small{font-size:12px;font-weight:500;color:var(--muted);margin-left:4px}
+.ptip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12px;line-height:1.5;box-shadow:0 2px 8px rgba(0,0,0,.08);white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 </style>
@@ -110,6 +114,20 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
       <dl class="kv" id="latestKv"></dl>
     </div>
     <div class="stats" id="stats"></div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>주가 흐름</h2>
+      <div class="seg" role="group" aria-label="기간 선택" id="prange">
+        <button data-y="1" aria-pressed="false">1년</button><button data-y="3" aria-pressed="false">3년</button><button data-y="5" aria-pressed="true">5년</button><button data-y="10" aria-pressed="false">10년</button><button data-y="0" aria-pressed="false">전체</button>
+      </div>
+    </div>
+    <div class="panel">
+      <dl class="pstats" id="pstats"></dl>
+      <div class="scroll" style="position:relative"><svg id="pchart" role="img" aria-label="SCHD 주가 흐름 선그래프"></svg><div class="ptip" id="ptip" hidden></div></div>
+      <div class="legend"><span><i style="background:var(--ink);height:2px;vertical-align:4px"></i>주가 (종가, 3:1 분할 반영)</span><span><i style="background:var(--up);height:2px;vertical-align:4px"></i>배당 재투자 시 (같은 출발점에서 배당을 다시 산 경우)</span></div>
+    </div>
+    <span class="cap" id="pcap"></span>
   </section>
 
   <section class="sec">
@@ -163,17 +181,18 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
   <footer class="notes">
     <p><b>기준</b> · 2024-10-11 SCHD 3:1 주식분할 이전 배당은 ÷3 해서 지금 1주 기준으로 맞췄습니다. 연간 성장률은 4회 배당이 모두 확정된 해만 계산합니다. CAGR(연평균 복리)과 산술 평균 성장률은 서로 다른 숫자입니다.</p>
     <p><b>세금</b> · SCHD 직접투자 배당은 미국에서 15% 원천징수되며 국내 추가 원천징수는 없습니다(금융소득 연 2,000만원 초과 시 종합과세 합산). 국내상장 해외주식형 ETF 분배금은 배당소득세 15.4% 과세 대상입니다.</p>
-    <p><b>출처</b> · SCHD 배당: <a href="https://www.schwabassetmanagement.com/products/schd" target="_blank" rel="noopener">Schwab Asset Management 공식 분배 내역</a>(2016.12~), 그 이전은 dividendhistory.net 원배당 · 배당락일 종가: Yahoo Finance · 지급일 환율: 하나은행 매매기준율 · 구성종목: Schwab 보유종목 전체 목록(2026-10-01) · 국내 ETF 분배: FunETF 분배 이력 · 총보수: 금융투자협회 공시(2026-08-31). 국내 ETF의 실부담비용(기타비용·매매중개수수료 포함)은 총보수보다 높습니다.</p>
+    <p><b>출처</b> · SCHD 배당: <a href="https://www.schwabassetmanagement.com/products/schd" target="_blank" rel="noopener">Schwab Asset Management 공식 분배 내역</a>(2016.12~), 그 이전은 dividendhistory.net 원배당 · 배당락일 종가·주가 흐름: Yahoo Finance · 지급일 환율: 하나은행 매매기준율 · 구성종목: Schwab 보유종목 전체 목록(2026-10-01) · 국내 ETF 분배: FunETF 분배 이력 · 총보수: 금융투자협회 공시(2026-08-31). 국내 ETF의 실부담비용(기타비용·매매중개수수료 포함)은 총보수보다 높습니다.</p>
     <p>특정 종목의 매수·매도를 권하는 자료가 아닙니다. 과거 배당이 미래 배당을 보장하지 않습니다.</p>
   </footer>
 </div>
 
 <script>
-let SCHD,KR,HOLD,HOLD_ASOF,AS_OF_KR,WHT,FEES,NAMES,TIMING,ORDER,META;
+let SCHD,KR,HOLD,HOLD_ASOF,AS_OF_KR,WHT,FEES,NAMES,TIMING,ORDER,META,PRICES;
 async function boot(){
   try{
     const get=n=>fetch('data/'+n+'.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error(n+' '+r.status);return r.json();});
-    const [d,k,h,m]=await Promise.all(['dividends','kr_etf','holdings','meta'].map(get));
+    const [d,k,h,m,pr]=await Promise.all(['dividends','kr_etf','holdings','meta','prices'].map(get));
+    PRICES=pr;
     META=m; WHT=m.withholding;
     const factor=ex=>m.splits.filter(s=>ex<s.date).reduce((f,s)=>f*s.ratio,1);
     SCHD=d.map(x=>[x.ex,x.pay,x.amount,factor(x.ex),x.close,x.fx]);
@@ -231,6 +250,63 @@ const S=[
  ['전년 동기 대비 인하',`${R.filter(r=>r.yoy!=null&&r.yoy<0).length}회`,'',`${R[0].y}년 이후 ${R.length}회 배당 중 (최근: ${(R.filter(r=>r.yoy!=null&&r.yoy<0).pop()||{}).y||'-'}년 ${(R.filter(r=>r.yoy!=null&&r.yoy<0).pop()||{}).q||''}분기)`],
 ];
 $('stats').innerHTML=S.map(([t,v,c,s])=>`<div class="stat"><span class="t">${t}</span><span class="v ${c}">${v}</span><span class="s">${s}</span></div>`).join('');
+
+// ---- 주가 흐름
+(function(){
+  const rows=PRICES.rows, last=rows[rows.length-1];
+  $('pcap').textContent=`${PRICES.asOf} 종가 기준 · Yahoo Finance · 배당 재투자선은 세금·수수료를 빼지 않은 값입니다.`;
+  const fmtD=s=>s.slice(0,4)+'.'+s.slice(5,7)+'.'+s.slice(8,10);
+  function draw(yrs){
+    let from=rows[0][0];
+    if(yrs){const d=new Date(last[0]);d.setFullYear(d.getFullYear()-yrs);from=d.toISOString().slice(0,10);}
+    const sub=rows.filter(r=>r[0]>=from), step=Math.max(1,Math.ceil(sub.length/700));
+    const pts=sub.filter((r,i)=>i%step===0||i===sub.length-1);
+    const p0=sub[0], k=p0[1]/p0[2];
+    const tr=r=>r[2]*k;
+    const yrsReal=(new Date(last[0])-new Date(p0[0]))/(365.25*864e5);
+    const pr=last[1]/p0[1]-1, trr=tr(last)/p0[1]-1;
+    const cg=v=>Math.pow(1+v,1/yrsReal)-1;
+    $('pstats').innerHTML=[
+      ['기간',`${fmtD(p0[0])} ~ ${fmtD(last[0])}`],
+      ['주가',`$${p0[1].toFixed(2)} → $${last[1].toFixed(2)}`],
+      ['주가 상승률',`${pct(pr,1)}${yrsReal>=1?`<small>연 ${pct(cg(pr),1)}</small>`:''}`],
+      ['배당 재투자 포함',`${pct(trr,1)}${yrsReal>=1?`<small>연 ${pct(cg(trr),1)}</small>`:''}`]
+    ].map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join('');
+    const W=1000,H=320,pl=52,pr2=64,pt=16,pb=30;
+    const vals=pts.flatMap(r=>[r[1],tr(r)]); let lo=Math.min(...vals),hi=Math.max(...vals);
+    const span=hi-lo, stp=[0.5,1,2,5,10,20][[0.5,1,2,5,10,20].findIndex(s=>span/s<=7)]||20;
+    lo=Math.floor(lo/stp)*stp; hi=Math.ceil(hi/stp)*stp;
+    const t0=+new Date(pts[0][0]), t1=+new Date(last[0]);
+    const xS=s=>pl+(W-pl-pr2)*((+new Date(s))-t0)/(t1-t0), yS=v=>pt+(H-pt-pb)*(hi-v)/(hi-lo);
+    let s='';
+    for(let v=lo;v<=hi+1e-9;v+=stp){const y=yS(v);s+=`<line x1="${pl}" x2="${W-pr2}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${pl-8}" y="${y+4}" text-anchor="end" font-size="11">$${v%1?v.toFixed(1):v}</text>`;}
+    const y0=+pts[0][0].slice(0,4), y1=+last[0].slice(0,4), every=Math.max(1,Math.ceil((y1-y0+1)/12));
+    if(yrs===1){for(let m=0;m<13;m++){const d=new Date(pts[0][0]);d.setDate(1);d.setMonth(d.getMonth()+m+1);const ds=d.toISOString().slice(0,10);if(ds>last[0])break;if(m%2)continue;const x=xS(ds);s+=`<line x1="${x}" x2="${x}" y1="${pt}" y2="${H-pb}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${x}" y="${H-pb+16}" text-anchor="middle" font-size="11">${ds.slice(2,4)}.${ds.slice(5,7)}</text>`;}}
+    else for(let y=y0+1;y<=y1;y++){if((y-y0-1)%every)continue;const x=xS(`${y}-01-01`);s+=`<line x1="${x}" x2="${x}" y1="${pt}" y2="${H-pb}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${x}" y="${H-pb+16}" text-anchor="middle" font-size="11">'${String(y).slice(2)}</text>`;}
+    const path=f=>pts.map((r,i)=>`${i?'L':'M'}${xS(r[0]).toFixed(1)} ${yS(f(r)).toFixed(1)}`).join('');
+    s+=`<path d="${path(r=>r[1])} L${xS(last[0])} ${H-pb} L${pl} ${H-pb}Z" fill="var(--ink)" opacity="0.06"/>`;
+    s+=`<path d="${path(tr)}" fill="none" stroke="var(--up)" stroke-width="1.8"/>`;
+    s+=`<path d="${path(r=>r[1])}" fill="none" stroke="var(--ink)" stroke-width="1.8"/>`;
+    const lx=xS(last[0]);
+    s+=`<circle cx="${lx}" cy="${yS(last[1])}" r="3.5" fill="var(--ink)"/><circle cx="${lx}" cy="${yS(tr(last))}" r="3.5" fill="var(--up)"/>`;
+    let ya=yS(tr(last))+4, yb=yS(last[1])+4; if(Math.abs(ya-yb)<14){const m=(ya+yb)/2; ya=m-7; yb=m+7;}
+    s+=`<text x="${lx+7}" y="${ya}" font-size="11" font-weight="600" style="fill:var(--up)">$${tr(last).toFixed(2)}</text>`;
+    s+=`<text x="${lx+7}" y="${yb}" font-size="11" font-weight="600" style="fill:var(--ink)">$${last[1].toFixed(2)}</text>`;
+    s+=`<line id="pcross" x1="0" x2="0" y1="${pt}" y2="${H-pb}" stroke="var(--muted)" stroke-width="1" visibility="hidden"/>`;
+    const svg=$('pchart'); svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.style.width='100%'; svg.style.minWidth='600px'; svg.innerHTML=s;
+    svg.onmousemove=e=>{const b=svg.getBoundingClientRect(), x=(e.clientX-b.left)*W/b.width;
+      if(x<pl||x>W-pr2){svg.onmouseleave();return;}
+      const t=t0+(x-pl)/(W-pl-pr2)*(t1-t0); let lo2=0,hi2=sub.length-1;
+      while(hi2-lo2>1){const mid=(lo2+hi2)>>1; (+new Date(sub[mid][0])<=t)?lo2=mid:hi2=mid;}
+      const r=sub[lo2], cx=xS(r[0]); const c=document.getElementById('pcross'); c.setAttribute('x1',cx);c.setAttribute('x2',cx);c.setAttribute('visibility','visible');
+      const tip=$('ptip'); tip.hidden=false; tip.innerHTML=`<b>${fmtD(r[0])}</b><br>주가 $${r[1].toFixed(2)}<br><span style="color:var(--up)">재투자 $${tr(r).toFixed(2)}</span>`;
+      const px=(cx/W)*b.width; tip.style.left=Math.min(px+10,b.width-130)+'px'; tip.style.top='8px';};
+    svg.onmouseleave=()=>{$('ptip').hidden=true;const c=document.getElementById('pcross');if(c)c.setAttribute('visibility','hidden');};
+  }
+  document.querySelectorAll('#prange button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#prange button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw(+b.dataset.y);}));
+  draw(5);
+})();
 
 // ---- 예상치 (진행 중인 해의 남은 분기 = 그해 확정 분기 단순 평균)
 const EST={};

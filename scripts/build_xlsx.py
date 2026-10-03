@@ -516,7 +516,34 @@ for k in ('showSerName','showCatName','showLegendKey','showPercent'): setattr(se
 dc.legend.position='r'
 H.add_chart(dc,'S4')
 
-wb._sheets=[wb[n] for n in ['사용법','최신분기_요약','SCHD_배당','연도별','분기표','국내SCHD형_분배','국내SCHD형_비교','구성종목','차트데이터']]
+
+# ---------------- 주가_월별 ----------------
+PR=J('prices')
+_m={}
+for d_,c_,a_ in PR['rows']: _m[d_[:7]]=(d_,c_,a_)
+P=wb.create_sheet('주가_월별')
+header(P,1,['월','월말 거래일','종가(USD)','배당 재투자 지수','종가 전년 대비','재투자 전년 대비'],[9,12,11,14,12,12])
+P.freeze_panes='A2'
+mrows=sorted(_m.items())
+for i,(ym,(d_,c_,a_)) in enumerate(mrows):
+    rr=i+2
+    P.cell(rr,1,ym); P.cell(rr,2,dt.date.fromisoformat(d_)).number_format=DATE
+    c=P.cell(rr,3,c_); c.number_format='$0.00'; c.font=f_in
+    c=P.cell(rr,4,a_); c.number_format='0.0000'; c.font=f_in
+    if rr>13:
+        P.cell(rr,5,f'=C{rr}/C{rr-12}-1').number_format=PCT
+        P.cell(rr,6,f'=D{rr}/D{rr-12}-1').number_format=PCT
+    for col in range(1,7): P.cell(rr,col).border=bd
+P['H1']=f"출처: {PR['source']} · 기준일 {PR['asOf']} · 3:1 분할(2024-10-11) 반영 가격"; P['H1'].font=f_s
+pc=LineChart(); pc.title='SCHD 월말 종가 (USD)'; pc.height=9; pc.width=26
+pc.add_data(Reference(P,min_col=3,min_row=1,max_row=len(mrows)+1),titles_from_data=True)
+pc.set_categories(Reference(P,min_col=1,min_row=2,max_row=len(mrows)+1))
+pc.series[0].graphicalProperties=GraphicalProperties(); pc.series[0].graphicalProperties.line=LineProperties(solidFill='16232C',w=19000)
+pc.series[0].marker.symbol='none'; pc.legend=None; pc.y_axis.numFmt='$0'; pc.x_axis.tickLblSkip=12
+pc.y_axis.delete=False; pc.x_axis.delete=False
+P.add_chart(pc,'H3')
+
+wb._sheets=[wb[n] for n in ['사용법','최신분기_요약','SCHD_배당','연도별','분기표','국내SCHD형_분배','국내SCHD형_비교','구성종목','주가_월별','차트데이터']]
 wb.calculation.fullCalcOnLoad=True
 out=ROOT/'downloads'/'schd_dividend_tracker.xlsx'
 wb.save(out); print(out)

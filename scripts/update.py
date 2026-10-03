@@ -217,6 +217,30 @@ def fill_fx(divs):
         errors.append(f"지급일 환율(다음금융) 수집 실패: {e}")
 
 
+# ---------------------------------------------------------------- 주가 흐름
+def update_prices(force=False):
+    """일별 종가·배당재투자 수정주가 전체 이력. 7일마다(또는 새 배당 반영 시) 통째로 다시 받는다.
+    수정주가(adj)는 배당이 생길 때마다 과거 값 전체가 바뀌므로 덧붙이지 않고 교체한다."""
+    p = load("prices")
+    if not force and (TODAY - dt.date.fromisoformat(p["asOf"])).days < 7:
+        return
+    try:
+        import yfinance as yf
+        px = yf.download("SCHD", period="max", progress=False, auto_adjust=False)
+        c, a = px["Close"], px["Adj Close"]
+        if hasattr(c, "columns"):
+            c, a = c.iloc[:, 0], a.iloc[:, 0]
+        rows = [[i.strftime("%Y-%m-%d"), round(float(cv), 4), round(float(av), 4)]
+                for i, cv, av in zip(px.index, c, a) if cv == cv and av == av]
+        if len(rows) < len(p["rows"]) - 5 or rows[0][0] != p["rows"][0][0]:
+            raise RuntimeError(f"주가 이력이 기존보다 짧거나 시작일이 다름 ({len(rows)}행, 시작 {rows[0][0] if rows else '-'})")
+        if rows[-1][0] != p["asOf"] or force:
+            save("prices", dict(asOf=rows[-1][0], source=p["source"], rows=rows))
+            changed.append("prices")
+    except Exception as e:  # noqa: BLE001
+        notes.append(f"주가(Yahoo) 갱신 실패: {e}")
+
+
 # ---------------------------------------------------------------- 구성종목
 def update_holdings(force=False):
     h = load("holdings")
@@ -277,7 +301,7 @@ def update_kr_etf():
 # ---------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--only", choices=["dividends", "holdings", "kr_etf"])
+    ap.add_argument("--only", choices=["dividends", "prices", "holdings", "kr_etf"])
     ap.add_argument("--force-holdings", action="store_true")
     a = ap.parse_args()
     RUN.mkdir(exist_ok=True)
@@ -287,6 +311,8 @@ def main():
     meta = load("meta")
     if a.only in (None, "dividends"):
         update_dividends(meta)
+    if a.only in (None, "prices"):
+        update_prices(force="dividends" in changed)
     if a.only in (None, "holdings"):
         update_holdings(force=a.force_holdings)
     if a.only in (None, "kr_etf"):
