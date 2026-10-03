@@ -103,9 +103,10 @@ tr.ref td{background:var(--accent-soft)}
 .htable tr.other td:nth-child(4){color:var(--ink)}
 .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
 tr.sum td{border-top:1px solid var(--ink);font-weight:700}
-.sectors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px}
-@media (max-width:560px){.sectors{grid-template-columns:1fr}}
-.srow{display:grid;grid-template-columns:96px minmax(0,1fr) 56px;gap:8px;align-items:center;font-size:13px}
+.sectors{display:flex;flex-direction:column;gap:10px}
+.srow{display:grid;grid-template-columns:104px minmax(0,1fr) 64px 52px;gap:10px;align-items:center;font-size:14px}
+.srow .sc{color:var(--muted);font-size:12px;text-align:right}
+.srow .trk{height:10px}
 .srow .trk{height:8px;background:var(--soft);border-radius:4px;overflow:hidden} .srow .fil{height:100%;background:var(--bar)}
 .srow .pv{font-family:var(--f-num);text-align:right}
 .pstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:12px}
@@ -510,9 +511,9 @@ drawQ();
   $('hToggle').addEventListener('click',()=>{open=!open; if(!open)$('ahq').value=''; render();});
   $('ahq').addEventListener('input',render);
   render();
-  const sec={};HOLD.forEach(x=>{sec[x[3]]=(sec[x[3]]||0)+x[1];});
-  const ss=Object.entries(sec).sort((a,b)=>b[1]-a[1]), mx=ss[0][1];
-  $('sectors').innerHTML=ss.map(([k,v])=>`<div class="srow"><span>${k}</span><span class="trk"><span class="fil" style="display:block;width:${(v/mx*100).toFixed(1)}%"></span></span><span class="pv">${v.toFixed(2)}%</span></div>`).join('');
+  const sec={},cnt={};HOLD.forEach(x=>{sec[x[3]]=(sec[x[3]]||0)+x[1]; if(x[3]!=='현금·선물')cnt[x[3]]=(cnt[x[3]]||0)+1;});
+  const ss=Object.entries(sec).sort((a,b)=>(a[0]==='현금·선물')-(b[0]==='현금·선물')||b[1]-a[1]), mx=Math.max(...ss.map(s=>s[1]));
+  $('sectors').innerHTML=ss.map(([k,v])=>`<div class="srow"><span>${k}</span><span class="trk"><span class="fil" style="display:block;width:${(v/mx*100).toFixed(1)}%"></span></span><span class="pv">${v.toFixed(2)}%</span><span class="sc">${cnt[k]?cnt[k]+'종목':''}</span></div>`).join('');
 })();
 
 // ---- 국내 SCHD형
