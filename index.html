@@ -93,6 +93,20 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 @media (max-width:640px){.pstats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .pstats div{min-width:0} .pstats dt{font-size:12px;color:var(--muted)} .pstats dd{margin:2px 0 0;font-family:var(--f-num);font-size:17px;font-weight:600}
 .pstats dd small{font-size:12px;font-weight:500;color:var(--muted);margin-left:4px}
+.prow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px;font-size:14px}
+.prow label{color:var(--muted);font-size:13px}
+.prow input[type=date]{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+.prow input[type=date]:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.estbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.estbox .eh{margin:0 0 8px;font-weight:700;font-size:15px}
+.estbox ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.estbox li{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:14px}
+.estbox li b{font-weight:600;min-width:11em}
+.estbox li .num{font-weight:700;font-size:16px}
+.estbox li .sub{color:var(--muted);font-size:13px;flex-basis:100%;padding-left:0}
+.estbox .up{color:var(--up);font-weight:600} .estbox .down{color:var(--down);font-weight:600}
+.estbox .en{margin:10px 0 0;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+@media (min-width:720px){.estbox li .sub{flex-basis:auto}}
 .ptip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12px;line-height:1.5;box-shadow:0 2px 8px rgba(0,0,0,.08);white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
@@ -123,6 +137,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
       </div>
     </div>
     <div class="panel">
+      <div class="prow"><label for="pFrom">시작일</label><input type="date" id="pFrom"><span>~</span><label for="pTo">종료일</label><input type="date" id="pTo"><span class="cap">날짜를 바꾸면 바로 다시 계산됩니다 (휴장일이면 가장 가까운 거래일 기준)</span></div>
       <dl class="pstats" id="pstats"></dl>
       <div class="scroll" style="position:relative"><svg id="pchart" role="img" aria-label="SCHD 주가 흐름 선그래프"></svg><div class="ptip" id="ptip" hidden></div></div>
       <div class="legend"><span><i style="background:var(--ink);height:2px;vertical-align:4px"></i>주가 (종가, 3:1 분할 반영)</span><span><i style="background:var(--up);height:2px;vertical-align:4px"></i>배당 재투자 시 (같은 출발점에서 배당을 다시 산 경우)</span></div>
@@ -149,7 +164,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
     <div class="panel"><div class="scroll"><svg id="qchart" role="img" aria-label="분기별 SCHD 배당 막대그래프"></svg></div>
       <div class="legend"><span><i style="background:var(--bar)"></i>확정</span><span><i style="background:var(--est);outline:1px dashed var(--est-line)"></i>예상 (남은 분기 = 올해 확정된 분기들의 평균)</span><span><i style="background:none;border-top:2px dashed var(--avg);height:0;width:16px;vertical-align:3px"></i>전체 평균(확정분)</span></div>
     </div>
-    <p class="cap" id="estNote" style="margin:0"></p>
+    <div class="estbox" id="estNote"></div>
   </section>
 
   <section class="sec">
@@ -256,19 +271,20 @@ $('stats').innerHTML=S.map(([t,v,c,s])=>`<div class="stat"><span class="t">${t}<
   const rows=PRICES.rows, last=rows[rows.length-1];
   $('pcap').textContent=`${PRICES.asOf} 종가 기준 · Yahoo Finance · 배당 재투자선은 세금·수수료를 빼지 않은 값입니다.`;
   const fmtD=s=>s.slice(0,4)+'.'+s.slice(5,7)+'.'+s.slice(8,10);
-  function draw(yrs){
-    let from=rows[0][0];
-    if(yrs){const d=new Date(last[0]);d.setFullYear(d.getFullYear()-yrs);from=d.toISOString().slice(0,10);}
-    const sub=rows.filter(r=>r[0]>=from), step=Math.max(1,Math.ceil(sub.length/700));
+  function draw(from,to){
+    const sub=rows.filter(r=>r[0]>=from&&r[0]<=to);
+    if(sub.length<2){$('pstats').innerHTML='<div><dt>기간</dt><dd>선택한 기간에 거래일이 2일 이상 있어야 합니다</dd></div>';$('pchart').innerHTML='';return;}
+    const end=sub[sub.length-1], step=Math.max(1,Math.ceil(sub.length/700));
+    $('pFrom').value=sub[0][0]; $('pTo').value=end[0];
     const pts=sub.filter((r,i)=>i%step===0||i===sub.length-1);
     const p0=sub[0], k=p0[1]/p0[2];
     const tr=r=>r[2]*k;
-    const yrsReal=(new Date(last[0])-new Date(p0[0]))/(365.25*864e5);
-    const pr=last[1]/p0[1]-1, trr=tr(last)/p0[1]-1;
+    const yrsReal=(new Date(end[0])-new Date(p0[0]))/(365.25*864e5);
+    const pr=end[1]/p0[1]-1, trr=tr(end)/p0[1]-1;
     const cg=v=>Math.pow(1+v,1/yrsReal)-1;
     $('pstats').innerHTML=[
-      ['기간',`${fmtD(p0[0])} ~ ${fmtD(last[0])}`],
-      ['주가',`$${p0[1].toFixed(2)} → $${last[1].toFixed(2)}`],
+      ['기간',`${fmtD(p0[0])} ~ ${fmtD(end[0])}`],
+      ['주가',`$${p0[1].toFixed(2)} → $${end[1].toFixed(2)}`],
       ['주가 상승률',`${pct(pr,1)}${yrsReal>=1?`<small>연 ${pct(cg(pr),1)}</small>`:''}`],
       ['배당 재투자 포함',`${pct(trr,1)}${yrsReal>=1?`<small>연 ${pct(cg(trr),1)}</small>`:''}`]
     ].map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join('');
@@ -276,22 +292,23 @@ $('stats').innerHTML=S.map(([t,v,c,s])=>`<div class="stat"><span class="t">${t}<
     const vals=pts.flatMap(r=>[r[1],tr(r)]); let lo=Math.min(...vals),hi=Math.max(...vals);
     const span=hi-lo, stp=[0.5,1,2,5,10,20][[0.5,1,2,5,10,20].findIndex(s=>span/s<=7)]||20;
     lo=Math.floor(lo/stp)*stp; hi=Math.ceil(hi/stp)*stp;
-    const t0=+new Date(pts[0][0]), t1=+new Date(last[0]);
+    const t0=+new Date(pts[0][0]), t1=+new Date(end[0]);
     const xS=s=>pl+(W-pl-pr2)*((+new Date(s))-t0)/(t1-t0), yS=v=>pt+(H-pt-pb)*(hi-v)/(hi-lo);
     let s='';
     for(let v=lo;v<=hi+1e-9;v+=stp){const y=yS(v);s+=`<line x1="${pl}" x2="${W-pr2}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${pl-8}" y="${y+4}" text-anchor="end" font-size="11">$${v%1?v.toFixed(1):v}</text>`;}
-    const y0=+pts[0][0].slice(0,4), y1=+last[0].slice(0,4), every=Math.max(1,Math.ceil((y1-y0+1)/12));
-    if(yrs===1){for(let m=0;m<13;m++){const d=new Date(pts[0][0]);d.setDate(1);d.setMonth(d.getMonth()+m+1);const ds=d.toISOString().slice(0,10);if(ds>last[0])break;if(m%2)continue;const x=xS(ds);s+=`<line x1="${x}" x2="${x}" y1="${pt}" y2="${H-pb}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${x}" y="${H-pb+16}" text-anchor="middle" font-size="11">${ds.slice(2,4)}.${ds.slice(5,7)}</text>`;}}
+    const y0=+pts[0][0].slice(0,4), y1=+end[0].slice(0,4), every=Math.max(1,Math.ceil((y1-y0+1)/12));
+    const days=(t1-t0)/864e5;
+    if(days<=500){const mstep=days<=120?1:2;for(let m=0;m<18;m++){const d=new Date(pts[0][0]);d.setDate(1);d.setMonth(d.getMonth()+m+1);const ds=d.toISOString().slice(0,10);if(ds>end[0])break;if(m%mstep)continue;const x=xS(ds);s+=`<line x1="${x}" x2="${x}" y1="${pt}" y2="${H-pb}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${x}" y="${H-pb+16}" text-anchor="middle" font-size="11">${ds.slice(2,4)}.${ds.slice(5,7)}</text>`;}}
     else for(let y=y0+1;y<=y1;y++){if((y-y0-1)%every)continue;const x=xS(`${y}-01-01`);s+=`<line x1="${x}" x2="${x}" y1="${pt}" y2="${H-pb}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${x}" y="${H-pb+16}" text-anchor="middle" font-size="11">'${String(y).slice(2)}</text>`;}
     const path=f=>pts.map((r,i)=>`${i?'L':'M'}${xS(r[0]).toFixed(1)} ${yS(f(r)).toFixed(1)}`).join('');
-    s+=`<path d="${path(r=>r[1])} L${xS(last[0])} ${H-pb} L${pl} ${H-pb}Z" fill="var(--ink)" opacity="0.06"/>`;
+    s+=`<path d="${path(r=>r[1])} L${xS(end[0])} ${H-pb} L${pl} ${H-pb}Z" fill="var(--ink)" opacity="0.06"/>`;
     s+=`<path d="${path(tr)}" fill="none" stroke="var(--up)" stroke-width="1.8"/>`;
     s+=`<path d="${path(r=>r[1])}" fill="none" stroke="var(--ink)" stroke-width="1.8"/>`;
-    const lx=xS(last[0]);
-    s+=`<circle cx="${lx}" cy="${yS(last[1])}" r="3.5" fill="var(--ink)"/><circle cx="${lx}" cy="${yS(tr(last))}" r="3.5" fill="var(--up)"/>`;
-    let ya=yS(tr(last))+4, yb=yS(last[1])+4; if(Math.abs(ya-yb)<14){const m=(ya+yb)/2; ya=m-7; yb=m+7;}
-    s+=`<text x="${lx+7}" y="${ya}" font-size="11" font-weight="600" style="fill:var(--up)">$${tr(last).toFixed(2)}</text>`;
-    s+=`<text x="${lx+7}" y="${yb}" font-size="11" font-weight="600" style="fill:var(--ink)">$${last[1].toFixed(2)}</text>`;
+    const lx=xS(end[0]);
+    s+=`<circle cx="${lx}" cy="${yS(end[1])}" r="3.5" fill="var(--ink)"/><circle cx="${lx}" cy="${yS(tr(end))}" r="3.5" fill="var(--up)"/>`;
+    let ya=yS(tr(end))+4, yb=yS(end[1])+4; if(Math.abs(ya-yb)<14){const m=(ya+yb)/2; ya=m-7; yb=m+7;}
+    s+=`<text x="${lx+7}" y="${ya}" font-size="11" font-weight="600" style="fill:var(--up)">$${tr(end).toFixed(2)}</text>`;
+    s+=`<text x="${lx+7}" y="${yb}" font-size="11" font-weight="600" style="fill:var(--ink)">$${end[1].toFixed(2)}</text>`;
     s+=`<line id="pcross" x1="0" x2="0" y1="${pt}" y2="${H-pb}" stroke="var(--muted)" stroke-width="1" visibility="hidden"/>`;
     const svg=$('pchart'); svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.style.width='100%'; svg.style.minWidth='600px'; svg.innerHTML=s;
     svg.onmousemove=e=>{const b=svg.getBoundingClientRect(), x=(e.clientX-b.left)*W/b.width;
@@ -303,9 +320,13 @@ $('stats').innerHTML=S.map(([t,v,c,s])=>`<div class="stat"><span class="t">${t}<
       const px=(cx/W)*b.width; tip.style.left=Math.min(px+10,b.width-130)+'px'; tip.style.top='8px';};
     svg.onmouseleave=()=>{$('ptip').hidden=true;const c=document.getElementById('pcross');if(c)c.setAttribute('visibility','hidden');};
   }
-  document.querySelectorAll('#prange button').forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll('#prange button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw(+b.dataset.y);}));
-  draw(5);
+  const preset=yrs=>{let from=rows[0][0];if(yrs){const d=new Date(last[0]);d.setFullYear(d.getFullYear()-yrs);from=d.toISOString().slice(0,10);}draw(from,last[0]);};
+  const press=b=>document.querySelectorAll('#prange button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  document.querySelectorAll('#prange button').forEach(b=>b.addEventListener('click',()=>{press(b);preset(+b.dataset.y);}));
+  $('pFrom').min=$('pTo').min=rows[0][0]; $('pFrom').max=$('pTo').max=last[0];
+  const custom=()=>{let f=$('pFrom').value,tt=$('pTo').value; if(!f||!tt)return; if(f>tt)[f,tt]=[tt,f]; press(null); draw(f,tt);};
+  $('pFrom').addEventListener('change',custom); $('pTo').addEventListener('change',custom);
+  preset(5);
 })();
 
 // ---- 예상치 (진행 중인 해의 남은 분기 = 그해 확정 분기 단순 평균)
@@ -389,7 +410,12 @@ if(EST.y){ const qn=a=>a.join('·')+'분기', done=R.filter(r=>r.y===EST.y).map(
   const avgQ=(y,qs)=>{const rs=R.filter(r=>r.y===y&&qs.includes(r.q));return rs.reduce((s,r)=>s+r.adj,0)/rs.length;};
   const ratios=full.map(a=>avgQ(a.y,EST.qs)/avgQ(a.y,done)-1).sort((x,y)=>x-y), hiN=ratios.filter(v=>v>0).length;
   const qtl=p=>{const i=(ratios.length-1)*p,lo=Math.floor(i);return ratios[lo]+(ratios[Math.ceil(i)]-ratios[lo])*(i-lo);};
-  $('estNote').textContent=`올해 확정된 ${qn(done)}만 놓고 보면 ${usd(ytdCur)}로, 작년 ${qn(done)}(${usd(ytdPrev)})보다 ${pct(ytdCur/ytdPrev-1)} ${ytdCur>=ytdPrev?'늘었습니다':'줄었습니다'}. 연간 예상치는 ${EST.y}년 ${qn(done)} 평균(${usd(EST.avg)})으로 남은 ${qn(EST.qs)}를 채운 단순 계산입니다. 과거 ${ratios.length}년 중 ${hiN}년은 ${qn(EST.qs)} 배당이 ${qn(done)} 평균보다 높았기 때문에(대개 +${Math.round(qtl(.25)*100)}~${Math.round(qtl(.75)*100)}%) 실제 연간 배당은 이 예상치보다 높게 나올 가능성이 큽니다(남은 ${qn(EST.qs)}가 ${qn(done)} 평균보다 10% 높게 나온다고 가정하면 연간 ${usd(up)}, 전년 대비 ${pct(up/byY(EST.y-1).tot-1)}).`; }
+  const g0=ytdCur/ytdPrev-1, prevTot=byY(EST.y-1).tot, gA=EST.total/prevTot-1, gB=up/prevTot-1;
+  $('estNote').innerHTML=`<p class="eh">${EST.y}년 배당 점검</p><ul>
+    <li><b>확정 ${qn(done)}</b> <span class="num">${usd(ytdCur)}</span><span class="sub">작년 같은 기간 ${usd(ytdPrev)} 대비 <span class="${cls(g0)}">${pct(g0)}</span></span></li>
+    <li><b>연간 예상 ① 단순 평균</b> <span class="num">${usd(EST.total)}</span><span class="sub">남은 ${qn(EST.qs)} = ${qn(done)} 평균 ${usd(EST.avg)} · 전년 대비 <span class="${cls(gA)}">${pct(gA)}</span></span></li>
+    <li><b>연간 예상 ② 남은 분기 +10%</b> <span class="num">${usd(up)}</span><span class="sub">남은 ${qn(EST.qs)}가 ${qn(done)} 평균보다 10% 높다고 가정 · 전년 대비 <span class="${cls(gB)}">${pct(gB)}</span></span></li>
+  </ul><p class="en">과거 ${ratios.length}년 중 ${hiN}년은 ${qn(EST.qs)} 배당이 ${qn(done)} 평균보다 높았습니다(대개 +${Math.round(qtl(.25)*100)}~${Math.round(qtl(.75)*100)}%). 그래서 실제 연간 배당은 ①보다 높게 나올 가능성이 큽니다.</p>`; }
 
 
 // ---- 분기 격자
