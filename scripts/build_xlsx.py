@@ -406,6 +406,27 @@ assert Z['A4'].value=='연도' and Z['A5'].value=='분기' and Z['A20'].value=='
 Z['C9'].value='+면 인상, −면 인하'; Z['C9'].font=f_s
 Z['C22'].value='배당 횟수가 같은 기간끼리 비교'; Z['C22'].font=f_s
 
+# 공식 수익률·다음 배당 예정 (meta.json 값 그대로, 기준일 함께 표기)
+OF=META.get('official'); SCH=(META.get('schedule') or {}).get('rows',[])
+r+=1
+Z.cell(r,1,'공식 수익률 · 다음 배당').font=Font(name=FONT,size=11,bold=True,color='1F2A44'); r+=1
+def zrow(k,v,fmt,note):
+    global r
+    Z.cell(r,1,k).font=f_n; Z.cell(r,1).border=bd
+    c=Z.cell(r,2,v); c.number_format=fmt; c.font=f_fx; c.alignment=R; c.border=bd
+    if note: Z.cell(r,3,note).font=f_s
+    r+=1
+if OF:
+    zrow('30일 SEC 수익률 (Schwab 공식)',OF['sec_yield']['value'],PCT,f"{OF['sec_yield']['asOf']} 기준 · 최근 30일 순투자수익(보수 차감) 연 환산")
+    zrow('분배수익률 TTM (Schwab 공식)',OF['dist_yield_ttm']['value'],PCT,f"{OF['dist_yield_ttm']['asOf']} 기준 · 최근 12개월 분배금 ÷ 기준일 NAV")
+nx=next((x for x in SCH if x['ex']>LAST['ex']),None)
+if nx:
+    zrow('다음 배당락일 (예정)',dt.date.fromisoformat(nx['ex']),DATE,f"{nx['q'][:4]}년 {nx['q'][-1]}분기 · 금액 미발표 · Schwab 분배 일정 기준(변경 가능)")
+    zrow('다음 지급일 (예정)',dt.date.fromisoformat(nx['pay']),DATE,None)
+else:
+    zrow('다음 배당락일 (예정)','일정 미공시','@',None)
+Z.cell(r,1,f"금액 출처: {LAST['src']}" + (f" · 트래커 반영 {J('dividends')[-1]['added']}" if J('dividends')[-1].get('added') else '') + " · 실제 세후 입금액은 증권사 거래내역 기준").font=f_s
+
 # quarterly line chart on SCHD sheet
 Q2=wb.create_sheet('차트데이터')
 header(Q2,1,['연도','분기','라벨','확정 배당','예상 배당','전체 평균'],[8,6,9,11,11,11])

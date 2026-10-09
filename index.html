@@ -128,6 +128,18 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 .estbox .en{margin:10px 0 0;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
 @media (min-width:720px){.estbox li .sub{flex-basis:auto}}
 .ptip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12px;line-height:1.5;box-shadow:0 2px 8px rgba(0,0,0,.08);white-space:nowrap}
+.next{background:var(--accent-soft);border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.55}
+.next b{font-weight:700;margin-right:4px} .next .tbd{font-weight:600;color:var(--accent)}
+.next .nw,.next .tbd{white-space:nowrap}
+.next .cap{display:block;margin-top:2px;font-size:12px}
+.offi{border-top:1px solid var(--line);padding-top:12px}
+.offi .oh{margin:0 0 8px;font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.offi dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 8px}
+.offi dl div{min-width:0} .offi dt{font-size:12px;color:var(--muted)}
+.offi dd{margin:2px 0 0;font-family:var(--f-num);font-size:20px;font-weight:700;line-height:1.3}
+.offi dd small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.offi p.cap{margin:0;font-size:12px;line-height:1.55}
+.src{margin:0;font-size:12px;line-height:1.55;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 </style>
@@ -145,7 +157,10 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
       <div class="lbl" id="latestLbl"></div>
       <div class="big" id="latestAmt"></div>
       <div class="chips" id="latestChips"></div>
+      <div class="next" id="nextDiv"></div>
       <dl class="kv" id="latestKv"></dl>
+      <div class="offi" id="offi" hidden></div>
+      <p class="src" id="latestSrc"></p>
     </div>
     <div class="stats" id="stats"></div>
   </section>
@@ -220,7 +235,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
   <footer class="notes">
     <p><b>기준</b> · 2024-10-11 SCHD 3:1 주식분할 이전 배당은 ÷3 해서 지금 1주 기준으로 맞췄습니다. 연간 성장률은 4회 배당이 모두 확정된 해만 계산합니다. CAGR(연평균 복리)과 산술 평균 성장률은 서로 다른 숫자입니다.</p>
     <p><b>세금</b> · SCHD 직접투자 배당은 미국에서 15% 원천징수되며 국내 추가 원천징수는 없습니다(금융소득 연 2,000만원 초과 시 종합과세 합산). 국내상장 해외주식형 ETF 분배금은 배당소득세 15.4% 과세 대상입니다.</p>
-    <p><b>출처</b> · SCHD 배당: <a href="https://www.schwabassetmanagement.com/products/schd" target="_blank" rel="noopener">Schwab Asset Management 공식 분배 내역</a>(2016.12~), 그 이전은 dividendhistory.net 원배당 · 배당락일 종가·주가 흐름: Yahoo Finance · 지급일 환율: 하나은행 매매기준율 · 구성종목: Schwab 보유종목 전체 목록(2026-10-01) · 국내 ETF 분배: FunETF 분배 이력 · 총보수: 금융투자협회 공시(2026-08-31). 국내 ETF의 실부담비용(기타비용·매매중개수수료 포함)은 총보수보다 높습니다.</p>
+    <p><b>출처</b> · SCHD 배당: <a href="https://www.schwabassetmanagement.com/products/schd" target="_blank" rel="noopener">Schwab Asset Management 공식 분배 내역</a>(2016.12~), 그 이전은 dividendhistory.net 원배당 · 배당락일 종가·주가 흐름: Yahoo Finance · 지급일 환율: 하나은행 매매기준율 · 구성종목: Schwab 보유종목 전체 목록(2026-10-01) · 국내 ETF 분배: FunETF 분배 이력 · 총보수: 금융투자협회 공시(2026-08-31) · 공식 수익률: Schwab 상품 페이지(각 수치 옆 기준일) · 분배 예정일: <a href="https://www.schwabassetmanagement.com/resource/schwab-equity-etfs-distribution-schedule-2026" target="_blank" rel="noopener">Schwab Equity ETFs Distribution Schedule 2026</a>(예정일은 바뀔 수 있음). 국내 ETF의 실부담비용(기타비용·매매중개수수료 포함)은 총보수보다 높습니다.</p>
     <p>특정 종목의 매수·매도를 권하는 자료가 아닙니다. 과거 배당이 미래 배당을 보장하지 않습니다.</p>
   </footer>
 </div>
@@ -234,7 +249,7 @@ async function boot(){
     PRICES=pr;
     META=m; WHT=m.withholding;
     const factor=ex=>m.splits.filter(s=>ex<s.date).reduce((f,s)=>f*s.ratio,1);
-    SCHD=d.map(x=>[x.ex,x.pay,x.amount,factor(x.ex),x.close,x.fx]);
+    SCHD=d.map(x=>[x.ex,x.pay,x.amount,factor(x.ex),x.close,x.fx,x.source,x.added]);
     ORDER=k.order; KR={}; FEES={}; NAMES={}; TIMING={};
     ORDER.forEach(c=>{const e=k.etfs[c]; KR[c]=e.history; FEES[c]=e.fee; NAMES[c]=e.name; TIMING[c]=e.timing;});
     const lastKR=ORDER.map(c=>KR[c][KR[c].length-1][0]).sort().pop();
@@ -257,7 +272,7 @@ const won1=v=>v.toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionD
 const cls=v=>v>0.00005?'up':v<-0.00005?'down':'flat';
 
 // ---- SCHD 기본 계산
-const R=SCHD.map(([ex,pay,amt,split,close,fx])=>{const adj=amt/split;return{ex,pay,amt,split,close,fx,adj,y:+ex.slice(0,4),q:Math.ceil(+ex.slice(5,7)/3),krw:fx?adj*fx:null};});
+const R=SCHD.map(([ex,pay,amt,split,close,fx,src,added])=>{const adj=amt/split;return{ex,pay,amt,split,close,fx,src,added,adj,y:+ex.slice(0,4),q:Math.ceil(+ex.slice(5,7)/3),krw:fx?adj*fx:null};});
 R.forEach((r,i)=>{r.qoq=i>0?r.adj/R[i-1].adj-1:null;r.yoy=i>=4?r.adj/R[i-4].adj-1:null;r.ttm=i>=3?R.slice(i-3,i+1).reduce((s,x)=>s+x.adj,0):null;r.yld=r.ttm&&r.close?r.ttm/r.close:null;});
 const years=[...new Set(R.map(r=>r.y))];
 const A=years.map(y=>{const rs=R.filter(r=>r.y===y);return{y,n:rs.length,tot:rs.reduce((s,r)=>s+r.adj,0),krw:rs.reduce((s,r)=>s+(r.krw||0),0)}});
@@ -277,9 +292,23 @@ $('latestAmt').innerHTML=`${usd(L.adj)}<span>1주당</span>`;
 $('latestChips').innerHTML=`<span class="chip ${cls(L.yoy)}">전년 동기 ${pct(L.yoy)}</span><span class="chip ${cls(L.qoq)}">전분기 ${pct(L.qoq)}</span><span class="chip">작년 ${L.q}분기 ${usd(R[R.length-5].adj)}</span>`;
 $('latestKv').innerHTML=[
  ['배당락일',L.ex],['지급일',L.pay],['배당락일 종가',L.close?usd(L.close,2):'-'],
- ['TTM 배당',usd(L.ttm)],['TTM 배당수익률',L.yld?(L.yld*100).toFixed(2)+'%':'-'],['지급일 환율',L.fx?won1(L.fx):'지급 예정'],
+ ['TTM 배당 (최근 4회)',usd(L.ttm)],['TTM 수익률 (배당락일 종가)',L.yld?(L.yld*100).toFixed(2)+'%':'-'],['지급일 환율',L.fx?won1(L.fx):'지급 예정'],
  ['1주 원화 세전',L.krw?won1(L.krw):'지급 후 표시'],['1주 원화 세후',L.krw?won1(L.krw*(1-WHT)):'지급 후 표시'],['100주 세후',L.krw?won(L.krw*(1-WHT)*100):'지급 후 표시']
 ].map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+// 다음 배당: 금액이 발표되기 전에는 Schwab 분배 일정의 날짜만 '예정'으로 보여 준다
+const SCH=(META.schedule&&META.schedule.rows)||[];
+const nx=SCH.find(r=>r.ex>L.ex);
+$('nextDiv').innerHTML=nx
+  ?`<b>다음 배당 (예정)</b><span class="nw">${nx.q.slice(0,4)}년 ${nx.q.slice(-1)}분기</span> · <span class="nw">배당락 ${nx.ex}</span> · <span class="nw">지급 ${nx.pay}</span> · <span class="tbd">금액 미발표</span><span class="cap">Schwab ${nx.q.slice(0,4)}년 분배 일정 기준이며 날짜는 바뀔 수 있습니다. 금액은 발표되면 자동으로 반영됩니다.</span>`
+  :`<b>다음 배당</b><span class="tbd">일정 미공시</span><span class="cap">Schwab이 새 분배 일정을 내면 반영합니다.</span>`;
+const O=META.official;
+if(O){const yv=x=>(x.value*100).toFixed(2)+'%';
+  $('offi').innerHTML=`<p class="oh">SCHWAB 공식 수익률</p><dl>
+   <div><dt>30일 SEC 수익률</dt><dd>${yv(O.sec_yield)}<small>${O.sec_yield.asOf} 기준</small></dd></div>
+   <div><dt>분배수익률 (TTM)</dt><dd>${yv(O.dist_yield_ttm)}<small>${O.dist_yield_ttm.asOf} 기준</small></dd></div></dl>
+   <p class="cap">위의 'TTM 수익률(배당락일 종가)'까지 세 숫자는 계산 방식과 기준일이 달라 서로 다릅니다. 30일 SEC 수익률은 최근 30일 순투자수익(보수 차감)을 1년으로 환산한 표준 공시 수치, 분배수익률(TTM)은 최근 12개월 분배금 합계를 기준일 NAV로 나눈 값입니다.</p>`;
+  $('offi').hidden=false;}
+$('latestSrc').textContent=`금액 출처: ${L.src}${L.added?` · 트래커 반영 ${L.added}`:''}. 원화 금액은 지급일 하나은행 매매기준율로 환산한 참고값이며, 실제 세후 입금액은 환전 시점·증권사 수수료에 따라 다르니 증권사 거래내역으로 확인하세요.`;
 const S=[
  ['올해 누적 vs 작년 동기',pct(ytdCur/ytdPrev-1),cls(ytdCur/ytdPrev-1),`${L.y}년 ${curY.n}회 ${usd(ytdCur)} · 작년 ${usd(ytdPrev)}`],
  [`${lastFull.y}년 연간 배당`,usd(lastFull.tot),'',`전년 대비 ${pct(lastFull.g)}`],
@@ -451,7 +480,8 @@ function drawQ(){
   [...years].reverse().forEach(y=>{const a=byY(y);
     h+=`<tr class="${a.n<4?'partial':''}"><td class="yr">${y}</td>`;
     for(let q=1;q<=4;q++){const r=R.find(x=>x.y===y&&x.q===q);
-      if(!r){h+=`<td class="na num">·</td>`;continue;}
+      if(!r){const sc=SCH.find(s=>s.q===y+'Q'+q&&s.ex>L.ex);
+        h+=sc?`<td class="num"><span class="d flat">${sc.ex.slice(5).replace('-','/')} 배당락 예정</span></td>`:`<td class="na num">·</td>`;continue;}
       if(val(r)==null){h+=`<td class="num"><span class="d flat">지급 전</span></td>`;continue;}
       const prev=R.find(x=>x.y===y-1&&x.q===q); const d=prev&&val(prev)!=null?val(r)/val(prev)-1:null;
       h+=`<td class="num">${fmt(val(r))}${d!=null?`<span class="d ${cls(d)}">${pct(d,1)}</span>`:''}</td>`;}

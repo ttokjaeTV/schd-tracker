@@ -25,12 +25,16 @@ GitHub Actions가 매일 새 데이터를 확인해 자동으로 갱신합니다
 - **주가 흐름**: Yahoo Finance 전체 이력을 7일마다(새 배당 반영 시엔 즉시) 통째로 다시 받음
 - **지급일 환율**: 하나은행 매매기준율(다음금융). 지급일이 지나야 채워짐
 - **구성종목**: Schwab 보유종목 CSV, 6일 이상 지났을 때만 확인. Schwab이 GitHub 서버 접속을 막으면(403) 기존 데이터를 유지하고, 30일 넘게 못 받으면 `확인 필요` 이슈로 알림
+- **공식 수익률**: Schwab 상품 페이지의 30일 SEC 수익률·분배수익률(TTM)을 기준일과 함께 `data/meta.json`의 `official`에 저장. SEC 기준일이 7일 이상 새로워졌거나 분배수익률 기준일이 바뀌었을 때만 갱신(매일 커밋 방지). Schwab이 막히면 기존 값 유지
+- **다음 배당 예정일**: Schwab이 연 1회 내는 'Schwab Equity ETFs Distribution Schedule'을 `data/meta.json`의 `schedule`에 손으로 입력. 금액이 발표되기 전까지 화면에는 날짜만 '예정'으로 표시
 - **국내 SCHD형 분배금**: FunETF 분배 이력
 - 새 배당이 반영되면 `SCHD 새 배당 반영` 이슈가, 수집 실패가 있으면 `확인 필요` 이슈가 생깁니다 (GitHub 알림 메일로 받음)
 
 ## 손으로 고칠 때
 
 - 값은 `data/*.json`에서 고칩니다. 엑셀은 다음 갱신 때 새로 만들어지므로 엑셀에서 고친 내용은 남지 않습니다.
+- 해가 바뀌면 `data/meta.json`의 `schedule.rows`에 새해 분기 일정(`q`·`ex`·`record`·`pay`)을 넣고 `source`·`checked`를 고칩니다. 예정일이 바닥나면 새 배당 알림 이슈에 안내가 붙습니다.
+- 공식 수익률을 손으로 고칠 때는 `official`의 `value`(소수, 3.37% → 0.0337)와 `asOf`를 같이 고칩니다.
 - 주식분할이 생기면 `data/meta.json`의 `splits`에 `{"date": "분할일", "ratio": 배수}`를 추가합니다.
 - 국내 ETF 총보수가 바뀌면 `data/kr_etf.json`의 `fee`와 `fee_source`를 고칩니다.
 - Actions 탭 → `SCHD 데이터 자동 갱신` → `Run workflow`로 언제든 수동 실행할 수 있습니다.

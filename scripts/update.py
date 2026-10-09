@@ -39,6 +39,8 @@ SCHWAB_HOLD = ("https://www.schwabassetmanagement.com/sites/g/files/eyrktu361/fi
 # 새 배당이 직전 배당 대비 이 범위를 벗어나면 반영하지 않고 경고만 남긴다
 MAX_CHANGE = 0.40
 
+_page_cache: dict = {}
+
 errors: list[str] = []
 notes: list[str] = []  # 매일 이슈를 만들 정도는 아닌 참고사항 (새 배당 알림에만 덧붙임)
 changed: list[str] = []
@@ -68,6 +70,13 @@ def get(url, *, referer=None, timeout=30, tries=3):
             last = str(e)
         time.sleep(2 * (i + 1))
     raise RuntimeError(f"{url} → {last}")
+
+
+def schwab_page():
+    """SCHD 상품 페이지 HTML. 구성종목·공식 수익률이 같이 쓰므로 한 번만 받는다."""
+    if "html" not in _page_cache:
+        _page_cache["html"] = get(SCHWAB_PAGE).text
+    return _page_cache["html"]
 
 
 def mdy(s):
@@ -142,7 +151,7 @@ def update_dividends(meta):
         if abs(chg) > MAX_CHANGE:
             errors.append(f"직전 대비 {chg:+.1%} 변화로 보류 (분할·특별배당 여부 확인 필요): {r}")
             continue
-        r.update(close=None, fx=None)
+        r.update(close=None, fx=None, added=TODAY.isoformat())
         divs.append(r)
         known.add(r["ex"])
         added.append((r, chg))
@@ -250,7 +259,7 @@ def update_holdings(force=False):
     if not force and age < 6:
         return
     try:
-        page = get(SCHWAB_PAGE).text
+        page = schwab_page()
         m = re.search(r"SCHD_FundHoldings_(\d{4}-\d{2}-\d{2})\.CSV", page)
         if not m:
             raise RuntimeError("상품 페이지에서 보유종목 CSV 링크를 찾지 못함")
@@ -273,6 +282,44 @@ def update_holdings(force=False):
     except Exception as e:  # noqa: BLE001
         msg = f"구성종목 수집 실패: {e} (현재 데이터 기준일 {h['asOf']}, {age}일 경과)"
         (errors if age >= 30 else notes).append(msg)
+
+
+# ---------------------------------------------------------------- 공식 수익률·분배 일정
+def update_official(meta, force=False):
+    """Schwab 상품 페이지의 30일 SEC 수익률·분배수익률(TTM)을 기준일과 함께 저장한다.
+    SEC 수익률은 매일 바뀌므로 기준일이 7일 이상 새로워졌을 때(또는 새 배당 반영 시)만 갱신해 매일 커밋을 막는다.
+    GitHub 서버에서 Schwab이 막히면(403) 기존 값을 유지한다 — 화면에 기준일이 함께 표시된다."""
+    o = meta.get("official")
+    if not o:
+        return
+    try:
+        html = schwab_page()
+        got = {}
+        for key, label in (("sec_yield", r"SEC Yield \(30 Day\)"), ("dist_yield_ttm", r"Distribution Yield \(TTM\)")):
+            m = re.search(label + r".{0,400}?As of (\d{2}/\d{2}/\d{4}).{0,200}?<td>\s*([\d.]+)%\s*</td>", html, re.S)
+            if not m:
+                raise RuntimeError(f"상품 페이지에서 {key} 값을 찾지 못함")
+            v = float(m.group(2)) / 100
+            if not 0.005 < v < 0.10:
+                raise RuntimeError(f"{key} 값이 이상함: {v:.4f}")
+            got[key] = dict(value=round(v, 4), asOf=mdy(m.group(1)))
+        old_sec = dt.date.fromisoformat(o["sec_yield"]["asOf"])
+        new_sec = dt.date.fromisoformat(got["sec_yield"]["asOf"])
+        if force or (new_sec - old_sec).days >= 7 or got["dist_yield_ttm"]["asOf"] != o["dist_yield_ttm"]["asOf"]:
+            o.update(got, checked=TODAY.isoformat())
+            changed.append("official")
+    except Exception as e:  # noqa: BLE001
+        age = (TODAY - dt.date.fromisoformat(o["sec_yield"]["asOf"])).days
+        notes.append(f"Schwab 공식 수익률 갱신 실패: {e} (현재 SEC 기준일 {o['sec_yield']['asOf']}, {age}일 경과)")
+
+
+def check_schedule(meta, divs):
+    """분배 일정(meta.schedule)은 Schwab이 연 1회 PDF로 내므로 손으로 넣는다. 다음 예정일이 없으면 알림."""
+    sch = meta.get("schedule") or {}
+    last_ex = divs[-1]["ex"]
+    if not any(r["ex"] > last_ex for r in sch.get("rows", [])):
+        notes.append("다음 분배 예정일이 data/meta.json의 schedule에 없습니다. "
+                     "Schwab 'Schwab Equity ETFs Distribution Schedule' 새해 일정을 확인해 넣어 주세요.")
 
 
 # ---------------------------------------------------------------- 국내 SCHD형 ETF
@@ -311,6 +358,9 @@ def main():
     meta = load("meta")
     if a.only in (None, "dividends"):
         update_dividends(meta)
+    if a.only in (None, "dividends"):
+        update_official(meta, force="dividends" in changed)
+        check_schedule(meta, load("dividends"))
     if a.only in (None, "prices"):
         update_prices(force="dividends" in changed)
     if a.only in (None, "holdings"):

@@ -48,5 +48,55 @@
   "": "현금·선물"
  },
  "withholding": 0.15,
- "schd_fee": 0.0006
+ "schd_fee": 0.0006,
+ "official": {
+  "source": "Schwab Asset Management SCHD 상품 페이지 (Yields)",
+  "url": "https://www.schwabassetmanagement.com/products/schd",
+  "checked": "2026-10-09",
+  "sec_yield": {
+   "value": 0.0337,
+   "asOf": "2026-10-07"
+  },
+  "dist_yield_ttm": {
+   "value": 0.03,
+   "asOf": "2026-08-31"
+  }
+ },
+ "schedule": {
+  "source": "Schwab Equity ETFs Distribution Schedule 2026 (2026-07-28 갱신)",
+  "url": "https://www.schwabassetmanagement.com/resource/schwab-equity-etfs-distribution-schedule-2026",
+  "checked": "2026-10-09",
+  "rows": [
+   {
+    "q": "2026Q1",
+    "ex": "2026-03-25",
+    "record": "2026-03-25",
+    "pay": "2026-03-30"
+   },
+   {
+    "q": "2026Q2",
+    "ex": "2026-06-24",
+    "record": "2026-06-24",
+    "pay": "2026-06-29"
+   },
+   {
+    "q": "2026Q3",
+    "ex": "2026-09-23",
+    "record": "2026-09-23",
+    "pay": "2026-09-28"
+   },
+   {
+    "q": "2026Q4",
+    "ex": "2026-12-09",
+    "record": "2026-12-09",
+    "pay": "2026-12-14"
+   }
+  ],
+  "extra": {
+   "ex": "2026-12-30",
+   "record": "2026-12-30",
+   "pay": "2027-01-05",
+   "note": "필요할 때만 추가 분배하는 예비 일정"
+  }
+ }
 }
