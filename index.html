@@ -39,7 +39,7 @@ h2{font-size:18px;margin:0;font-weight:700;letter-spacing:-.01em;text-wrap:balan
 .cap{font-size:13px;color:var(--muted)}
 .num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
 /* hero */
-.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
 @media (max-width:760px){.hero{grid-template-columns:1fr}}
 .latest{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
 .latest .lbl{font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:600}
@@ -56,6 +56,18 @@ h2{font-size:18px;margin:0;font-weight:700;letter-spacing:-.01em;text-wrap:balan
 .stat .t{font-size:12px;color:var(--muted)}
 .stat .v{font-family:var(--f-num);font-size:24px;font-weight:700;line-height:1.2}
 .stat .s{font-size:12px;color:var(--muted)}
+.stat .mini{margin-top:auto;padding-top:10px;display:flex;flex-direction:column;gap:4px}
+.stat .mini svg{display:block;width:100%;height:36px}
+.stat .axg{display:grid;font-size:11px;color:var(--muted);font-family:var(--f-num);text-align:center}
+.stat .ax{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-family:var(--f-num)}
+.stat .hint{font-size:12px;line-height:1.5;color:var(--ink);background:var(--soft);border-radius:6px;padding:5px 8px}
+.stat .hint b{font-weight:700}
+.stat .strip{display:flex;gap:3px} .stat .strip i{flex:1;height:12px;border-radius:2px;background:var(--up)} .stat .strip i.dn{background:var(--down)}
+.stat .hb{display:grid;grid-template-columns:5.5em minmax(0,1fr) 3.6em;gap:6px;align-items:center;font-size:12px}
+.stat .hb span:first-child{color:var(--muted)} .stat .hb .tr{height:8px;background:var(--soft);border-radius:4px;overflow:hidden} .stat .hb .tr i{display:block;height:100%}
+.stat .hb b{font-family:var(--f-num);font-weight:600;text-align:right}
+.stat .chips2{display:flex;flex-wrap:wrap;gap:4px} .stat .chips2 span{font-size:11.5px;padding:1px 7px;border-radius:999px;background:var(--down-soft);color:var(--down);font-family:var(--f-num)}
+.stat .lg{display:flex;gap:10px;font-size:11px;color:var(--muted)} .stat .lg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}
 .v.up{color:var(--up)} .v.down{color:var(--down)}
 /* chart */
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
@@ -139,7 +151,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 .offi dd{margin:2px 0 0;font-family:var(--f-num);font-size:20px;font-weight:700;line-height:1.3}
 .offi dd small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
 .offi p.cap{margin:0;font-size:12px;line-height:1.55}
-.src{margin:0;font-size:12px;line-height:1.55;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.src{margin:auto 0 0;font-size:12px;line-height:1.55;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 </style>
@@ -309,15 +321,40 @@ if(O){const yv=x=>(x.value*100).toFixed(2)+'%';
    <p class="cap">위의 'TTM 수익률(배당락일 종가)'까지 세 숫자는 계산 방식과 기준일이 달라 서로 다릅니다. 30일 SEC 수익률은 최근 30일 순투자수익(보수 차감)을 1년으로 환산한 표준 공시 수치, 분배수익률(TTM)은 최근 12개월 분배금 합계를 기준일 NAV로 나눈 값입니다.</p>`;
   $('offi').hidden=false;}
 $('latestSrc').textContent=`금액 출처: ${L.src}${L.added?` · 트래커 반영 ${L.added}`:''}. 원화 금액은 지급일 하나은행 매매기준율로 환산한 참고값이며, 실제 세후 입금액은 환전 시점·증권사 수수료에 따라 다르니 증권사 거래내역으로 확인하세요.`;
+// ---- 요약 타일 8칸 (숫자 + 작은 그래프/해석 한 줄)
+const vbars=(vals,col)=>{const W=100,H=36,n=vals.length,mx=Math.max(...vals.map(Math.abs))||1,neg=vals.some(v=>v<0),base=neg?H/2:H,sc=neg?H/2-1:H-1,bw=W/n;
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${vals.map((v,i)=>{const h=Math.max(Math.abs(v)/mx*sc,.8),y=v>=0?base-h:base;return `<rect x="${i*bw+bw*.15}" y="${y}" width="${bw*.7}" height="${h}" style="fill:${col(v,i)}"/>`;}).join('')}${neg?`<line x1="0" x2="${W}" y1="${base}" y2="${base}" style="stroke:var(--line)" stroke-width="1" vector-effect="non-scaling-stroke"/>`:''}</svg>`;};
+const hbars=items=>{const mx=Math.max(...items.map(x=>Math.abs(x[1])));return items.map(([k,v,c,t])=>`<div class="hb"><span>${k}</span><span class="tr"><i style="width:${Math.max(Math.abs(v)/mx*100,2)}%;background:${c}"></i></span><b>${t}</b></div>`).join('');};
+const doneQ=R.filter(r=>r.y===L.y).map(r=>r.q);
+const qv=(y,q)=>(R.find(r=>r.y===y&&r.q===q)||{}).adj||0;
+const last10=full.slice(-10), g10=A.filter(a=>a.g!=null).slice(-10);
+const gMin=g10.reduce((m,a)=>a.g<m.g?a:m), gMax=g10.reduce((m,a)=>a.g>m.g?a:m);
+const cuts=R.filter(r=>r.yoy!=null&&r.yoy<0), downYears=A.filter(a=>a.g!=null&&a.g<0).length;
+const c5=cagr(5), dbl=Math.log(2)/Math.log(1+c5);
+const PR=PRICES.rows, pNow=PR[PR.length-1], tgt=(+pNow[0].slice(0,4)-10)+pNow[0].slice(4);
+const p10=[...PR].reverse().find(r=>r[0]<=tgt);
+const yocNow=L.ttm/pNow[1], yoc10=p10?L.ttm/p10[1]:null;
+const drip=p10?pNow[2]/p10[2]-1:null, pxOnly=p10?pNow[1]/p10[1]-1:null;
+const streakYs=A.filter(a=>a.g!=null).slice(-Math.max(lastFull.streak,1));
 const S=[
- ['올해 누적 vs 작년 동기',pct(ytdCur/ytdPrev-1),cls(ytdCur/ytdPrev-1),`${L.y}년 ${curY.n}회 ${usd(ytdCur)} · 작년 ${usd(ytdPrev)}`],
- [`${lastFull.y}년 연간 배당`,usd(lastFull.tot),'',`전년 대비 ${pct(lastFull.g)}`],
- ['5년 CAGR',pct(cagr(5)),'',`${lastFull.y-5} → ${lastFull.y}년, 연평균 복리`],
- ['10년 CAGR',pct(cagr(10)),'',`산술 평균으로는 ${pct(arith)}`],
- ['연간 배당 연속 증가',`${lastFull.streak}년`,'',`${R[0].y}년 이후 집계`],
- ['전년 동기 대비 인하',`${R.filter(r=>r.yoy!=null&&r.yoy<0).length}회`,'',`${R[0].y}년 이후 ${R.length}회 배당 중 (최근: ${(R.filter(r=>r.yoy!=null&&r.yoy<0).pop()||{}).y||'-'}년 ${(R.filter(r=>r.yoy!=null&&r.yoy<0).pop()||{}).q||''}분기)`],
+ ['올해 누적 vs 작년 동기',pct(ytdCur/ytdPrev-1),cls(ytdCur/ytdPrev-1),`${L.y}년 ${curY.n}회 ${usd(ytdCur)} · 작년 같은 기간 ${usd(ytdPrev)}`,
+  `${vbars(doneQ.flatMap(q=>[qv(L.y-1,q),qv(L.y,q)]),(v,i)=>i%2?'var(--bar)':'var(--other)')}<div class="axg" style="grid-template-columns:repeat(${doneQ.length},1fr)">${doneQ.map(q=>`<span>Q${q}</span>`).join('')}</div><div class="lg"><span><i style="background:var(--other)"></i>${L.y-1}년</span><span><i style="background:var(--bar)"></i>${L.y}년</span></div>`],
+ [`${lastFull.y}년 연간 배당`,usd(lastFull.tot),'',`전년 대비 ${pct(lastFull.g)} · ${last10[0].y}년 ${usd(last10[0].tot)}의 ${(lastFull.tot/last10[0].tot).toFixed(1)}배`,
+  `${vbars(last10.map(a=>a.tot),(v,i)=>i===last10.length-1?'var(--accent)':'var(--bar-partial)')}<div class="ax"><span>${last10[0].y}</span><span>${lastFull.y}</span></div>`],
+ ['5년 CAGR',pct(c5),'',`${lastFull.y-5}년 ${usd(byY(lastFull.y-5).tot)} → ${lastFull.y}년 ${usd(lastFull.tot)}, 연평균 복리`,
+  `<div class="hint">이 속도가 이어진다면 배당이 2배가 되는 데 <b>약 ${dbl.toFixed(1)}년</b> (과거 수치일 뿐 보장 아님)</div>`],
+ ['10년 CAGR',pct(cagr(10)),'',`산술 평균으로는 ${pct(arith)}`,
+  `${vbars(g10.map(a=>a.g),v=>v<0?'var(--down)':'var(--up)')}<div class="ax"><span>${g10[0].y}</span><span>${g10[g10.length-1].y}</span></div><div class="ax"><span>최저 ${gMin.y}년 ${pct(gMin.g,1)}</span><span>최고 ${gMax.y}년 ${pct(gMax.g,1)}</span></div>`],
+ ['연간 배당 연속 증가',`${lastFull.streak}년`,'',`${streakYs[0].y}년부터 ${lastFull.y}년까지 매년 증가 (${R[0].y}년 이후 집계)`,
+  `<div class="strip">${streakYs.map(a=>`<i class="${a.g<0?'dn':''}" title="${a.y}년 ${pct(a.g,1)}"></i>`).join('')}</div><div class="ax"><span>${streakYs[0].y}</span><span>${lastFull.y}</span></div>`],
+ ['전년 동기 대비 인하',`${cuts.length}회`,'',`${R[0].y}년 이후 ${R.length}회 배당 중`,
+  `<div class="chips2">${cuts.slice(-4).reverse().map(r=>`<span>${String(r.y).slice(2)}Q${r.q} ${pct(r.yoy,1)}</span>`).join('')}</div><div class="hint">분기 인하는 있었지만 <b>연간 배당이 줄어든 해는 ${downYears}번</b>입니다</div>`],
+ ['10년 전 매수가 기준 배당률',yoc10?(yoc10*100).toFixed(2)+'%':'-','',p10?`${p10[0]} 종가 ${usd(p10[1],2)}에 샀다면 · 최근 4회 배당 ${usd(L.ttm)} 기준`:'',
+  p10?hbars([['10년 전 매수',yoc10,'var(--accent)',(yoc10*100).toFixed(1)+'%'],['지금 매수',yocNow,'var(--other)',(yocNow*100).toFixed(1)+'%']])+`<div class="ax"><span>지금 매수는 ${pNow[0]} 종가 ${usd(pNow[1],2)} 기준</span></div>`:''],
+ ['10년 배당 재투자 총수익',drip!=null?pct(drip,0):'-',drip>0?'up':'',p10?`${p10[0]} → ${pNow[0]}, 배당을 다시 산 경우`:'',
+  p10?hbars([['배당 재투자',drip,'var(--up)',pct(drip,0)],['주가만',pxOnly,'var(--other)',pct(pxOnly,0)]])+`<div class="ax"><span>세금·수수료 미반영 · Yahoo 수정주가</span></div>`:''],
 ];
-$('stats').innerHTML=S.map(([t,v,c,s])=>`<div class="stat"><span class="t">${t}</span><span class="v ${c}">${v}</span><span class="s">${s}</span></div>`).join('');
+$('stats').innerHTML=S.map(([t,v,c,s,x])=>`<div class="stat"><span class="t">${t}</span><span class="v ${c}">${v}</span><span class="s">${s}</span>${x?`<div class="mini">${x}</div>`:''}</div>`).join('');
 
 // ---- 주가 흐름
 (function(){
