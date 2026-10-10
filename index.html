@@ -182,6 +182,9 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 .offi dd small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
 .offi p.cap{margin:0;font-size:12px;line-height:1.55}
 .src{margin:auto 0 0;font-size:12px;line-height:1.55;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+#krq{table-layout:fixed;min-width:640px}
+#krq th:first-child,#krq td:first-child{width:96px}
+#krq td .d{white-space:normal}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 </style>
@@ -747,7 +750,7 @@ const sectorRows=rows=>{const mx=Math.max(...rows.map(r=>r[1]));
       const prev=KR[c].filter(x=>+x[0].slice(0,4)===yy-1&&Math.ceil(+x[0].slice(4,6)/3)===qq);
       const s=xs.reduce((a,x)=>a+x[1],0), p=prev.reduce((a,x)=>a+x[1],0);
       // 작년 같은 분기와 분배 횟수가 같을 때만 증감률, 아니면 이유를 회색으로
-      const why=!prev.length?(KR[c][0][0]>`${yy-1}${String(qq*3).padStart(2,'0')}31`?'작년엔 상장 전':'작년 분배 없음'):`작년 ${prev.length}회 · 비교 불가`;
+      const f0=KR[c][0][0], why=!prev.length?(f0>`${yy-1}${String(qq*3).padStart(2,'0')}31`?`첫 분배 ${f0.slice(2,4)}년 ${+f0.slice(4,6)}월 · 비교 불가`:'작년 0회 · 비교 불가'):`작년 ${prev.length}회 · 비교 불가`;
       t+=xs.length?`<td class="num">${won(s)}${p&&prev.length===xs.length?`<span class="d ${cls(s/p-1)}">${pct(s/p-1,1)}</span>`:`<span class="d flat" title="증감률은 작년 같은 분기와 분배 횟수가 같을 때만 계산합니다">${why}</span>`}</td>`:`<td class="na num">·</td>`;});
     const r=R.find(x=>x.y===yy&&x.q===qq);
     t+=r?`<td class="num">${usd(r.adj)}${r.yoy!=null?`<span class="d ${cls(r.yoy)}">${pct(r.yoy,1)}</span>`:''}</td>`:'<td class="na">·</td>';
