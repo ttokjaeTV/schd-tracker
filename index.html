@@ -159,10 +159,13 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 .estbox .en{margin:10px 0 0;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
 @media (min-width:720px){.estbox li .sub{flex-basis:auto}}
 .ptip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:12px;line-height:1.5;box-shadow:0 2px 8px rgba(0,0,0,.08);white-space:nowrap}
-.next{background:var(--accent-soft);border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.55}
-.next b{font-weight:700;margin-right:4px} .next .tbd{font-weight:600;color:var(--accent)}
-.next .nw,.next .tbd{white-space:nowrap}
-.next .cap{display:block;margin-top:2px;font-size:12px}
+.next{background:var(--accent-soft);border-radius:8px;padding:12px 14px;font-size:14px;line-height:1.5;display:flex;flex-direction:column;gap:8px}
+.next .nh{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.next .nh b{font-weight:700} .next .nh .q{color:var(--muted)}
+.next .tbd{margin-left:auto;font-size:12px;font-weight:600;color:var(--accent);background:var(--surface);border:1px solid var(--accent);border-radius:999px;padding:1px 9px;white-space:nowrap}
+.next .nd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}
+.next .nd div{min-width:0} .next .nd dt{font-size:12px;color:var(--muted)} .next .nd dd{margin:1px 0 0;font-family:var(--f-num);font-size:16px;font-weight:600}
+.next .cap{display:block;font-size:12px;line-height:1.55}
 .offi{border-top:1px solid var(--line);padding-top:12px}
 .offi .oh{margin:0 0 8px;font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:600}
 .offi dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 8px}
@@ -349,8 +352,10 @@ $('latestKv').innerHTML=[
 const SCH=(META.schedule&&META.schedule.rows)||[];
 const nx=SCH.find(r=>r.ex>L.ex);
 $('nextDiv').innerHTML=nx
-  ?`<b>다음 배당 (예정)</b><span class="nw">${nx.q.slice(0,4)}년 ${nx.q.slice(-1)}분기</span> · <span class="nw">배당락 ${nx.ex}</span> · <span class="nw">지급 ${nx.pay}</span> · <span class="tbd">금액 미발표</span><span class="cap">Schwab ${nx.q.slice(0,4)}년 분배 일정 기준이며 날짜는 바뀔 수 있습니다. 금액은 발표되면 자동으로 반영됩니다.</span>`
-  :`<b>다음 배당</b><span class="tbd">일정 미공시</span><span class="cap">Schwab이 새 분배 일정을 내면 반영합니다.</span>`;
+  ?`<div class="nh"><b>다음 배당 (예정)</b><span class="q">${nx.q.slice(0,4)}년 ${nx.q.slice(-1)}분기</span><span class="tbd">금액 미발표</span></div>
+    <dl class="nd"><div><dt>배당락일</dt><dd>${nx.ex}</dd></div><div><dt>지급일</dt><dd>${nx.pay}</dd></div></dl>
+    <span class="cap">Schwab ${nx.q.slice(0,4)}년 분배 일정 기준 · 날짜는 바뀔 수 있음<br>금액은 발표되면 자동 반영</span>`
+  :`<div class="nh"><b>다음 배당</b><span class="tbd">일정 미공시</span></div><span class="cap">Schwab이 새 분배 일정을 내면 반영합니다.</span>`;
 const O=META.official;
 if(O){const yv=x=>(x.value*100).toFixed(2)+'%';
   $('offi').innerHTML=`<p class="oh">SCHWAB 공식 수익률</p><dl>
