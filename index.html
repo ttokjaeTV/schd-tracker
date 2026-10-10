@@ -298,7 +298,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
   <section class="sec">
     <div class="sec-head"><h2>국내상장 SCHD형 ETF 비교</h2><span class="cap" id="krAsOf"></span></div>
     <div class="panel scroll"><table id="krtable"></table></div>
-    <div class="panel scroll"><table id="krq"></table></div>
+    <div class="panel"><div class="scroll"><table id="krq"></table></div><button type="button" class="htoggle" id="krqToggle" aria-expanded="false"></button></div>
     <span class="cap">네 종목 모두 같은 지수(Dow Jones U.S. Dividend 100)를 따라가며 매월 분배합니다. 분기 합계는 분배 기준일이 속한 분기로 묶었습니다. 작은 숫자는 작년 같은 분기 대비이며, 분배 횟수가 다르면 계산하지 않고 이유를 표시합니다.</span>
   </section>
 
@@ -741,9 +741,13 @@ const sectorRows=rows=>{const mx=Math.max(...rows.map(r=>r[1]));
   const sl=R.filter(r=>new Date(r.ex)<=asof).pop();
   h+=`<tr class="ref"><td>SCHD <span class="cap">미국 직투 · 참고</span></td><td class="num">0.06%</td><td>분기</td><td class="num">${usd(sl.adj)}<span class="d flat">${sl.ex}</span></td><td class="num">${usd(sl.ttm)}<span class="d flat">4회</span></td><td class="num">${(sl.yld*100).toFixed(2)}%</td></tr></tbody>`;
   $('krtable').innerHTML=h;
-  // 분기 합계 (최근 8개 분기)
-  const qs=[];let y=asof.getFullYear(),q=Math.ceil((asof.getMonth()+1)/3);
-  for(let i=0;i<8;i++){qs.unshift([y,q]);q--;if(!q){q=4;y--;}}
+  // 분기 합계: 평소엔 최근 8개 분기, 펼치면 가장 먼저 분배한 종목의 첫 분기부터 전부
+  const first=ORDER.map(c=>KR[c][0][0]).sort()[0], fy=+first.slice(0,4), fq=Math.ceil(+first.slice(4,6)/3);
+  const all=[];{let y=asof.getFullYear(),q=Math.ceil((asof.getMonth()+1)/3);
+    while(y>fy||(y===fy&&q>=fq)){all.unshift([y,q]);q--;if(!q){q=4;y--;}}}
+  let krAll=false;
+  const drawKRQ=()=>{
+  const qs=krAll?all:all.slice(-8);
   let t=`<thead><tr><th>분기 합계</th>${ORDER.map(c=>`<th>${NAMES[c].split(' ')[0]}</th>`).join('')}<th>SCHD (USD)</th></tr></thead><tbody>`;
   [...qs].reverse().forEach(([yy,qq])=>{t+=`<tr><td class="yr">${yy} Q${qq}</td>`;
     ORDER.forEach(c=>{const xs=KR[c].filter(x=>+x[0].slice(0,4)===yy&&Math.ceil(+x[0].slice(4,6)/3)===qq);
@@ -751,11 +755,18 @@ const sectorRows=rows=>{const mx=Math.max(...rows.map(r=>r[1]));
       const s=xs.reduce((a,x)=>a+x[1],0), p=prev.reduce((a,x)=>a+x[1],0);
       // 작년 같은 분기와 분배 횟수가 같을 때만 증감률, 아니면 이유를 회색으로
       const f0=KR[c][0][0], why=!prev.length?(f0>`${yy-1}${String(qq*3).padStart(2,'0')}31`?`첫 분배 ${f0.slice(2,4)}년 ${+f0.slice(4,6)}월 · 비교 불가`:'작년 0회 · 비교 불가'):`작년 ${prev.length}회 · 비교 불가`;
+      if(!xs.length&&`${yy}${String(qq*3).padStart(2,'0')}31`<f0){t+=`<td class="num"><span class="d flat">분배 시작 전</span></td>`;return;}
       t+=xs.length?`<td class="num">${won(s)}${p&&prev.length===xs.length?`<span class="d ${cls(s/p-1)}">${pct(s/p-1,1)}</span>`:`<span class="d flat" title="증감률은 작년 같은 분기와 분배 횟수가 같을 때만 계산합니다">${why}</span>`}</td>`:`<td class="na num">·</td>`;});
     const r=R.find(x=>x.y===yy&&x.q===qq);
     t+=r?`<td class="num">${usd(r.adj)}${r.yoy!=null?`<span class="d ${cls(r.yoy)}">${pct(r.yoy,1)}</span>`:''}</td>`:'<td class="na">·</td>';
     t+='</tr>';});
   $('krq').innerHTML=t+'</tbody>';
+  const b=$('krqToggle'); b.setAttribute('aria-expanded',krAll);
+  b.textContent=krAll?'최근 8개 분기만 보기 ▴':`이전 분기 모두 보기 ▾ (${fy} Q${fq}부터 ${all.length}개 분기)`;
+  b.hidden=all.length<=8;
+  };
+  $('krqToggle').addEventListener('click',()=>{krAll=!krAll;drawKRQ();});
+  drawKRQ();
 })();
 }
 boot();
