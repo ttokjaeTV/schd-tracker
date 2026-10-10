@@ -68,6 +68,11 @@ h2{font-size:18px;margin:0;font-weight:700;letter-spacing:-.01em;text-wrap:balan
 .stat .hb b{font-family:var(--f-num);font-weight:600;text-align:right}
 .stat .chips2{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px} .stat .chips2 span{display:flex;flex-direction:column;align-items:center;line-height:1.25;font-size:11.5px;padding:3px 2px;border-radius:6px;background:var(--down-soft);color:var(--down);font-family:var(--f-num);white-space:nowrap} .stat .chips2 span b{font-weight:700;color:var(--ink);font-size:11px}
 @media (max-width:560px){.stat .chips2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat .dv{display:grid;grid-template-columns:2.4em minmax(0,1fr) 4.2em;gap:6px;align-items:center;font-size:12px}
+.stat .dv>span:first-child{color:var(--muted)} .stat .dv b{font-family:var(--f-num);font-weight:600;text-align:right}
+.stat .dv .tr{position:relative;height:10px} .stat .dv .tr::before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;border-left:1px solid var(--line)}
+.stat .dv .tr i{position:absolute;top:0;height:100%;border-radius:2px}
+.stat .dv.tot{border-top:1px solid var(--line);padding-top:5px;margin-top:1px} .stat .dv.tot>span:first-child{color:var(--ink);font-weight:600}
 .stat .lg{display:flex;gap:10px;font-size:11px;color:var(--muted)} .stat .lg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}
 .v.up{color:var(--up)} .v.down{color:var(--down)}
 /* chart */
@@ -391,7 +396,12 @@ const stAll=streakYs[0].y===(A.find(a=>a.g!=null)||{}).y;
 const stMin=streakYs.reduce((m,a)=>a.g<m.g?a:m,streakYs[0]);
 const S=[
  ['올해 누적 vs 작년 동기',pct(ytdCur/ytdPrev-1),cls(ytdCur/ytdPrev-1),`${L.y}년 ${curY.n}회 ${usd(ytdCur)} · 작년 같은 기간 ${usd(ytdPrev)}`,
-  `${vbars(doneQ.flatMap(q=>[qv(L.y-1,q),qv(L.y,q)]),(v,i)=>i%2?'var(--bar)':'var(--other)')}<div class="axg" style="grid-template-columns:repeat(${doneQ.length},1fr)">${doneQ.map(q=>`<span>Q${q}</span>`).join('')}</div><div class="lg"><span><i style="background:var(--other)"></i>${L.y-1}년</span><span><i style="background:var(--bar)"></i>${L.y}년</span></div>`],
+  (()=>{ // 분기별 전년 동기 대비 증감 (가운데 0 기준 좌우 막대) + 누적
+    const rows=doneQ.map(q=>[`Q${q}`,qv(L.y,q)/qv(L.y-1,q)-1,`${L.y-1} ${usd(qv(L.y-1,q))} → ${L.y} ${usd(qv(L.y,q))}`,'']).concat([['누적',ytdCur/ytdPrev-1,`${usd(ytdPrev)} → ${usd(ytdCur)}`,'tot']]);
+    const mx=Math.max(...rows.map(r=>Math.abs(r[1])))||1;
+    return rows.map(([k,v,t,c])=>{const w=(Math.abs(v)/mx*50).toFixed(1), col=v<0?'var(--down)':(c?'var(--accent)':'var(--up)');
+      return `<div class="dv ${c}" title="${t}"><span>${k}</span><span class="tr"><i style="${v<0?`right:50%`:`left:50%`};width:${w}%;background:${col}"></i></span><b style="color:${v<0?'var(--down)':'var(--up)'}">${pct(v,1)}</b></div>`;}).join('')
+      +`<div class="ax"><span>막대 = 분기별 전년 같은 분기 대비</span></div>`;})()],
  [`${lastFull.y}년 연간 배당`,usd(lastFull.tot),'',`전년 대비 ${pct(lastFull.g)} · ${last10[0].y}년 ${usd(last10[0].tot)}의 ${(lastFull.tot/last10[0].tot).toFixed(1)}배`,
   `${vbars(last10.map(a=>a.tot),(v,i)=>i===last10.length-1?'var(--accent)':'var(--bar-partial)')}<div class="ax"><span>${last10[0].y}</span><span>${lastFull.y}</span></div>`],
  ['5년 CAGR',pct(c5),'',`${lastFull.y-5}년 ${usd(byY(lastFull.y-5).tot)} → ${lastFull.y}년 ${usd(lastFull.tot)}, 연평균 복리`,
