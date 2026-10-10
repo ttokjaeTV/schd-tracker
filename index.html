@@ -296,7 +296,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
     <div class="sec-head"><h2>국내상장 SCHD형 ETF 비교</h2><span class="cap" id="krAsOf"></span></div>
     <div class="panel scroll"><table id="krtable"></table></div>
     <div class="panel scroll"><table id="krq"></table></div>
-    <span class="cap">네 종목 모두 같은 지수(Dow Jones U.S. Dividend 100)를 따라가며 매월 분배합니다. 분기 합계는 분배 기준일이 속한 분기로 묶었습니다.</span>
+    <span class="cap">네 종목 모두 같은 지수(Dow Jones U.S. Dividend 100)를 따라가며 매월 분배합니다. 분기 합계는 분배 기준일이 속한 분기로 묶었습니다. 작은 숫자는 작년 같은 분기 대비이며, 분배 횟수가 다르면 계산하지 않고 이유를 표시합니다.</span>
   </section>
 
   <footer class="notes">
@@ -746,7 +746,9 @@ const sectorRows=rows=>{const mx=Math.max(...rows.map(r=>r[1]));
     ORDER.forEach(c=>{const xs=KR[c].filter(x=>+x[0].slice(0,4)===yy&&Math.ceil(+x[0].slice(4,6)/3)===qq);
       const prev=KR[c].filter(x=>+x[0].slice(0,4)===yy-1&&Math.ceil(+x[0].slice(4,6)/3)===qq);
       const s=xs.reduce((a,x)=>a+x[1],0), p=prev.reduce((a,x)=>a+x[1],0);
-      t+=xs.length?`<td class="num">${won(s)}${p&&prev.length===xs.length?`<span class="d ${cls(s/p-1)}">${pct(s/p-1,1)}</span>`:''}</td>`:`<td class="na num">·</td>`;});
+      // 작년 같은 분기와 분배 횟수가 같을 때만 증감률, 아니면 이유를 회색으로
+      const why=!prev.length?(KR[c][0][0]>`${yy-1}${String(qq*3).padStart(2,'0')}31`?'작년엔 상장 전':'작년 분배 없음'):`작년 ${prev.length}회 · 비교 불가`;
+      t+=xs.length?`<td class="num">${won(s)}${p&&prev.length===xs.length?`<span class="d ${cls(s/p-1)}">${pct(s/p-1,1)}</span>`:`<span class="d flat" title="증감률은 작년 같은 분기와 분배 횟수가 같을 때만 계산합니다">${why}</span>`}</td>`:`<td class="na num">·</td>`;});
     const r=R.find(x=>x.y===yy&&x.q===qq);
     t+=r?`<td class="num">${usd(r.adj)}${r.yoy!=null?`<span class="d ${cls(r.yoy)}">${pct(r.yoy,1)}</span>`:''}</td>`:'<td class="na">·</td>';
     t+='</tr>';});
