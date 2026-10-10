@@ -26,7 +26,10 @@ html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!i
   --accent:#E3A55A; --accent-soft:#3A2C1B; --bar:#D79A4E; --bar-partial:#6B5132; --est:#3A2E20; --est-line:#E3A55A; --avg:#8DB4DE; --other:#3A4852;
   --up:#5CC48D; --up-soft:#173327; --down:#F0867E; --down-soft:#3B1E1C; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.005em}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.005em;word-break:keep-all;overflow-wrap:break-word}
+p,.cap,.s,.hint,.sub,.en,dd,dt,li{text-wrap:pretty}
+.stat .s .ln{display:block;text-wrap:balance}
+.hint b{white-space:nowrap}
 .wrap{max-width:1040px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:flex;flex-direction:column;gap:28px}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:14px}
 h1{font-size:30px;line-height:1.15;margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
@@ -418,7 +421,7 @@ const S=[
  ['10년 배당 재투자 총수익',drip!=null?pct(drip,0):'-',drip>0?'up':'',p10?`${p10[0]} → ${pNow[0]}, 배당을 다시 산 경우`:'',
   p10?hbars([['배당 재투자',drip,'var(--up)',pct(drip,0)],['주가만',pxOnly,'var(--other)',pct(pxOnly,0)]])+`<div class="ax"><span>세금·수수료 미반영 · Yahoo 수정주가</span></div>`:''],
 ];
-$('stats').innerHTML=S.map(([t,v,c,s,x])=>`<div class="stat"><span class="t">${t}</span><span class="v ${c}">${v}</span><span class="s">${s}</span>${x?`<div class="mini">${x}</div>`:''}</div>`).join('');
+$('stats').innerHTML=S.map(([t,v,c,s,x])=>`<div class="stat"><span class="t">${t}</span><span class="v ${c}">${v}</span><span class="s">${String(s).split(/ · |, /).filter(Boolean).map(t=>`<span class="ln">${t}</span>`).join('')}</span>${x?`<div class="mini">${x}</div>`:''}</div>`).join('');
 
 // ---- 주가 흐름
 (function(){
@@ -569,7 +572,8 @@ if(EST.y){ const qn=a=>a.join('·')+'분기', done=R.filter(r=>r.y===EST.y).map(
     <li><b>확정 ${qn(done)}</b> <span class="num">${usd(ytdCur)}</span><span class="sub">작년 같은 기간 ${usd(ytdPrev)} 대비 <span class="${cls(g0)}">${pct(g0)}</span></span></li>
     <li><b>연간 예상 ① 단순 평균</b> <span class="num">${usd(EST.total)}</span><span class="sub">남은 ${qn(EST.qs)} = ${qn(done)} 평균 ${usd(EST.avg)} · 전년 대비 <span class="${cls(gA)}">${pct(gA)}</span></span></li>
     <li><b>연간 예상 ② 남은 분기 +10%</b> <span class="num">${usd(up)}</span><span class="sub">남은 ${qn(EST.qs)}가 ${qn(done)} 평균보다 10% 높다고 가정 · 전년 대비 <span class="${cls(gB)}">${pct(gB)}</span></span></li>
-  </ul><p class="en">과거 ${ratios.length}년 중 ${hiN}년은 ${qn(EST.qs)} 배당이 ${qn(done)} 평균보다 높았습니다(대개 +${Math.round(qtl(.25)*100)}~${Math.round(qtl(.75)*100)}%). 그래서 실제 연간 배당은 ①보다 높게 나올 가능성이 큽니다.</p>`; }
+  </ul><p class="en">과거 ${ratios.length}년 중 ${hiN}년은 ${qn(EST.qs)} 배당이 ${qn(done)} 평균보다 높았습니다(대개 +${Math.round(qtl(.25)*100)}~${Math.round(qtl(.75)*100)}%). 그래서 실제 연간 배당은 ①보다 높게 나올 가능성이 큽니다.</p>`;
+  document.querySelectorAll('#estNote .sub').forEach(el=>{el.innerHTML=el.innerHTML.split(' · ').join('<br>');}); }
 
 
 // ---- 분기 격자
