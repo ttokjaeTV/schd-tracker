@@ -92,7 +92,9 @@ tr.ref td{background:var(--accent-soft)}
 .notes{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:16px}
 .notes p{margin:0;max-width:72ch}
 .notes a{color:var(--accent)}
-.hold{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:16px;align-items:stretch}
+.hold{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:16px;align-items:start}
+.hcol{display:flex;flex-direction:column;gap:16px;min-width:0}
+.hcol .h3,.hpanel .h3{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 @media (max-width:720px){.hold{grid-template-columns:1fr}}
 .donut-wrap{display:flex;align-items:center;justify-content:center} .donut-wrap svg{width:100%;max-width:300px;height:auto}
 .ahbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px}
@@ -100,7 +102,7 @@ tr.ref td{background:var(--accent-soft)}
 .htoggle:hover{border-color:var(--muted)}
 .htoggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .hold.open{align-items:start}
-.hold.open .donut-wrap{position:sticky;top:16px}
+
 .ahbar input{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);min-width:0;flex:1 1 220px;max-width:340px}
 .ahbar input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .htable{table-layout:fixed}
@@ -116,13 +118,10 @@ tr.ref td{background:var(--accent-soft)}
 .htable tr.other td{color:var(--muted)}
 .htable tr.other td:nth-child(4){color:var(--ink)}
 .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
-.hmbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px}
+.hmbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0}
 .hmbar select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
 .hmbar select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-.hmgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
-@media (max-width:720px){.hmgrid{grid-template-columns:1fr}}
 .h3{font-size:14px;margin:0 0 10px;font-weight:700}
-.hm3{table-layout:fixed;width:100%} .hm3 th,.hm3 td{text-align:left;vertical-align:middle} .hm3 th:nth-child(1),.hm3 td:nth-child(1){width:44px;text-align:center} .hm3 th:nth-child(3),.hm3 td:nth-child(3){width:84px;text-align:right} .hm3 .tk{color:var(--muted);font-size:12px;margin-left:6px} .hm3 .nm{display:flex;align-items:center;flex-wrap:wrap}
 .h3 .cap{font-weight:400;font-size:12px;margin-left:6px}
 .srow .sc.up{color:var(--up)} .srow .sc.down{color:var(--down)}
 .hmmv{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px;font-size:13px}
@@ -135,7 +134,7 @@ tr.ref td{background:var(--accent-soft)}
 .lgd i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 .sectors{display:flex;flex-direction:column;gap:10px}
-.srow{display:grid;grid-template-columns:104px minmax(0,1fr) 64px 52px;gap:10px;align-items:center;font-size:14px}
+.srow{display:grid;grid-template-columns:92px minmax(0,1fr) 60px 58px;gap:10px;align-items:center;font-size:14px}
 .srow .sc{color:var(--muted);font-size:12px;text-align:right}
 .srow .trk{height:10px}
 .srow .trk{height:8px;background:var(--soft);border-radius:4px;overflow:hidden} .srow .fil{height:100%;background:var(--bar)}
@@ -249,25 +248,32 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
   <section class="sec">
     <div class="sec-head"><h2>구성종목 TOP 10</h2><span class="cap" id="holdAsOf"></span></div>
     <div class="hold">
-      <div class="panel donut-wrap"><svg id="donut" viewBox="0 0 300 300" role="img" aria-label="SCHD 상위 10종목과 기타 비중 도넛 차트"></svg></div>
-      <div class="panel">
+      <div class="hcol">
+        <div class="panel donut-wrap"><svg id="donut" viewBox="0 0 300 300" role="img" aria-label="SCHD 상위 10종목과 기타 비중 도넛 차트"></svg></div>
+        <div class="panel"><h3 class="h3">섹터 비중<span class="cap">전체 보유 종목 기준</span></h3><div id="sectors" class="sectors"></div></div>
+      </div>
+      <div class="panel hpanel">
+        <h3 class="h3">TOP 10<span class="cap" id="holdTopCap"></span></h3>
         <div class="ahbar" id="ahbar" hidden><label for="ahq" class="cap">검색</label><input id="ahq" type="search" placeholder="종목명·티커·섹터 (예: 펩시, HD, 금융)"><span class="cap" id="ahcnt"></span></div>
         <div class="scroll"><table id="holdTable" class="htable"></table></div>
         <button type="button" class="htoggle" id="hToggle" aria-expanded="false"></button>
       </div>
     </div>
-    <div class="panel"><div class="sec-head" style="margin-bottom:10px"><h2 style="font-size:15px">섹터 비중</h2><span class="cap">전체 보유 종목 기준</span></div><div id="sectors" class="sectors"></div></div>
   </section>
 
   <section class="sec" id="hmSec">
     <div class="sec-head"><h2>월별 비중 기록</h2><span class="cap" id="hmCap"></span></div>
-    <div class="panel">
-      <div class="hmbar"><label for="hmSel" class="cap">기준 달</label><select id="hmSel"></select><span class="cap" id="hmBasis"></span></div>
-      <div class="hmgrid">
-        <div><h3 class="h3">섹터 비중<span class="cap" id="hmVs"></span></h3><div id="hmSectors" class="sectors"></div></div>
-        <div><h3 class="h3">TOP 10</h3><div class="scroll"><table id="hmTop" class="hm3"></table></div></div>
+    <div class="hmbar"><label for="hmSel" class="cap">기준 달</label><select id="hmSel"></select><span class="cap" id="hmBasis"></span></div>
+    <div class="hold">
+      <div class="hcol">
+        <div class="panel donut-wrap"><svg id="hmDonut" viewBox="0 0 300 300" role="img" aria-label="선택한 달의 SCHD 상위 10종목과 기타 비중 도넛 차트"></svg></div>
+        <div class="panel"><h3 class="h3">섹터 비중<span class="cap" id="hmVs"></span></h3><div id="hmSectors" class="sectors"></div></div>
       </div>
-      <div id="hmMoves"></div>
+      <div class="panel hpanel">
+        <h3 class="h3">TOP 10<span class="cap" id="hmTopCap"></span></h3>
+        <div class="scroll"><table id="hmTop" class="htable"></table></div>
+        <div id="hmMoves"></div>
+      </div>
     </div>
     <div class="panel hmtrend">
       <div class="sec-head" style="margin-bottom:10px"><h2 style="font-size:15px">섹터 비중 추이</h2><span class="cap">매월 첫 거래일 · 막대를 누르면 그 달로 이동</span></div>
@@ -579,6 +585,22 @@ function drawQ(){
 ['usd','krw','net'].forEach(u=>$('u-'+u).addEventListener('click',()=>{unit=u;['usd','krw','net'].forEach(k=>$('u-'+k).setAttribute('aria-pressed',k===u));drawQ();}));
 drawQ();
 
+// ---- 도넛 (현재 구성종목·월별 기록 공용): segs = TOP10 + 기타(마지막)
+const donutSVG=(segs,topSum,other)=>{
+  const cx=150,cy=150,R1=128,R0=82; let a0=-Math.PI/2, s='';
+  const P=(r,a)=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];
+  segs.forEach((g,i)=>{const a1=a0+2*Math.PI*g.v/100, lg=(a1-a0)>Math.PI?1:0;
+    const [x1,y1]=P(R1,a0),[x2,y2]=P(R1,a1),[x3,y3]=P(R0,a1),[x4,y4]=P(R0,a0);
+    s+=`<path d="M${x1} ${y1}A${R1} ${R1} 0 ${lg} 1 ${x2} ${y2}L${x3} ${y3}A${R0} ${R0} 0 ${lg} 0 ${x4} ${y4}Z" fill="${g.c}" stroke="var(--surface)" stroke-width="1.5"><title>${g.n} ${g.v.toFixed(2)}%</title></path>`;
+    const am=(a0+a1)/2,[lx,ly]=P((R0+R1)/2,am), last=i===segs.length-1, dark=[3,6,9].includes(i+1)||last;
+    s+=`<text x="${lx}" y="${ly+3.5}" text-anchor="middle" font-size="${last?12:8.6}" font-weight="600" style="fill:${dark?'#16232C':'#FFFFFF'}">${last?g.v.toFixed(2)+'%':g.v.toFixed(2)}</text>`;
+    a0=a1;});
+  return s+`<text x="${cx}" y="${cy-14}" text-anchor="middle" font-size="12">TOP 10</text><text x="${cx}" y="${cy+8}" text-anchor="middle" font-size="22" font-weight="600" style="fill:var(--ink)">${topSum.toFixed(2)}%</text><text x="${cx}" y="${cy+26}" text-anchor="middle" font-size="11">기타 ${other.toFixed(2)}% · 합계 100%</text>`;
+};
+// 섹터 막대 (공용): rows = [[섹터, 비중, 오른쪽 작은 칸, 그 칸 class]]
+const sectorRows=rows=>{const mx=Math.max(...rows.map(r=>r[1]));
+  return rows.map(([k,v,t,c])=>`<div class="srow"><span>${k}</span><span class="trk"><span class="fil" style="display:block;width:${(v/mx*100).toFixed(1)}%"></span></span><span class="pv">${v.toFixed(2)}%</span><span class="sc ${c||''}">${t||''}</span></div>`).join('');};
+
 // ---- 구성종목
 (function(){
   const hs=[...HOLD].sort((a,b)=>b[1]-a[1]), top=hs.slice(0,10);
@@ -589,18 +611,10 @@ drawQ();
   const prevW=prevRec?Object.fromEntries(prevRec.items.map(x=>[x[0],x[1]])):null;
   $('holdAsOf').textContent=(HOLD_META.basis==='computed'
     ?`${HOLD_ASOF} 종가 기준 · 보유 주식 수(Schwab 공시 ${HOLD_META.off}${HOLD_META.top?`, 상위 25종목 ${HOLD_META.top}`:''}) × 종가로 계산`
-    :`${HOLD_ASOF} 기준 · Schwab 공시`)+(prevRec?` · 비중 아래 숫자는 ${md(prevRec.asOf)} 대비`:'')+' · 합계 100%';
+    :`${HOLD_ASOF} 기준 · Schwab 공시`)+' · 합계 100%';
+  $('holdTopCap').textContent=prevRec?`비중 아래 숫자는 ${md(prevRec.asOf)} 대비`:'';
   const dlt=(v,p)=>{if(!prevW)return'';if(p==null)return'<span class="d up">신규</span>';const d=v-p;const c=d>0.005?'up':d<-0.005?'down':'flat';return`<span class="d ${c}">${d>=0?'+':'−'}${Math.abs(d).toFixed(2)}%p</span>`;};
-  const cx=150,cy=150,R1=128,R0=82; let a0=-Math.PI/2, s='';
-  const P=(r,a)=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];
-  segs.forEach((g,i)=>{const a1=a0+2*Math.PI*g.v/100, lg=(a1-a0)>Math.PI?1:0;
-    const [x1,y1]=P(R1,a0),[x2,y2]=P(R1,a1),[x3,y3]=P(R0,a1),[x4,y4]=P(R0,a0);
-    s+=`<path d="M${x1} ${y1}A${R1} ${R1} 0 ${lg} 1 ${x2} ${y2}L${x3} ${y3}A${R0} ${R0} 0 ${lg} 0 ${x4} ${y4}Z" fill="${g.c}" stroke="var(--surface)" stroke-width="1.5"><title>${g.n} ${g.v.toFixed(2)}%</title></path>`;
-    const am=(a0+a1)/2,[lx,ly]=P((R0+R1)/2,am), dark=[3,6,9].includes(i+1)||i===10;
-    s+=`<text x="${lx}" y="${ly+3.5}" text-anchor="middle" font-size="${i===10?12:8.6}" font-weight="600" style="fill:${dark?'#16232C':'#FFFFFF'}">${i===10?g.v.toFixed(2)+'%':g.v.toFixed(2)}</text>`;
-    a0=a1;});
-  s+=`<text x="${cx}" y="${cy-14}" text-anchor="middle" font-size="12">TOP 10</text><text x="${cx}" y="${cy+8}" text-anchor="middle" font-size="22" font-weight="600" style="fill:var(--ink)">${topSum.toFixed(2)}%</text><text x="${cx}" y="${cy+26}" text-anchor="middle" font-size="11">기타 ${other.toFixed(2)}% · 합계 100%</text>`;
-  $('donut').innerHTML=s;
+  $('donut').innerHTML=donutSVG(segs,topSum,other);
   // 표: 평소엔 TOP10 + 기타, 펼치면 전체 종목
   const stocks=hs.filter(x=>x[3]!=='현금·선물'), cash=hs.filter(x=>x[3]==='현금·선물');
   const color=k=>{const i=top.findIndex(x=>x[0]===k);return i>=0?`var(--p${i+1})`:'var(--other)';};
@@ -632,8 +646,8 @@ drawQ();
   $('ahq').addEventListener('input',render);
   render();
   const sec={},cnt={};HOLD.forEach(x=>{sec[x[3]]=(sec[x[3]]||0)+x[1]; if(x[3]!=='현금·선물')cnt[x[3]]=(cnt[x[3]]||0)+1;});
-  const ss=Object.entries(sec).sort((a,b)=>(a[0]==='현금·선물')-(b[0]==='현금·선물')||b[1]-a[1]), mx=Math.max(...ss.map(s=>s[1]));
-  $('sectors').innerHTML=ss.map(([k,v])=>`<div class="srow"><span>${k}</span><span class="trk"><span class="fil" style="display:block;width:${(v/mx*100).toFixed(1)}%"></span></span><span class="pv">${v.toFixed(2)}%</span><span class="sc">${cnt[k]?cnt[k]+'종목':''}</span></div>`).join('');
+  const ss=Object.entries(sec).sort((a,b)=>(a[0]==='현금·선물')-(b[0]==='현금·선물')||b[1]-a[1]);
+  $('sectors').innerHTML=sectorRows(ss.map(([k,v])=>[k,v,cnt[k]?cnt[k]+'종목':'']));
 })();
 
 // ---- 월별 비중 기록
@@ -656,13 +670,21 @@ drawQ();
     $('hmSel').value=mo;
     $('hmBasis').textContent=`${r.asOf} 기준 · ${r.basis==='official'?'Schwab 공시 비중':'공시 주식 수 × 종가 계산'}`;
     $('hmVs').textContent=p?`${+p.month.slice(5,7)}월 대비`:'';
-    const sc=secOf(r), sp=p?secOf(p):{}, mx=Math.max(...Object.values(sc));
-    $('hmSectors').innerHTML=Object.entries(sc).sort((a,b)=>b[1]-a[1]).map(([k,v])=>{const d=p?sig(v-(sp[k]||0)):null;
-      return `<div class="srow"><span>${k}</span><span class="trk"><span class="fil" style="display:block;width:${(v/mx*100).toFixed(1)}%;background:${col(k)}"></span></span><span class="pv">${v.toFixed(2)}%</span><span class="sc ${d?d.c:''}">${d?d.t:''}</span></div>`;}).join('');
+    const sc=secOf(r), sp=p?secOf(p):{};
+    if(r.cash) sc['현금·선물']=(sc['현금·선물']||0)+r.cash;
+    $('hmSectors').innerHTML=sectorRows(Object.entries(sc).sort((a,b)=>(a[0]==='현금·선물')-(b[0]==='현금·선물')||b[1]-a[1]).map(([k,v])=>{
+      const d=p&&k!=='현금·선물'?sig(v-(sp[k]||0)):null; return [k,v,d?d.t:'',d?d.c:''];}));
     const pw=p?Object.fromEntries(p.items.map(x=>[x[0],x[1]])):null;
-    $('hmTop').innerHTML=`<thead><tr><th>순위</th><th>종목</th><th>비중</th></tr></thead><tbody>`+r.items.slice(0,10).map(([k,w],n)=>{
-      const d=!pw?'':pw[k]==null?'<span class="d up">신규</span>':(x=>`<span class="d ${x.c}">${x.t}</span>`)(sig(w-pw[k]));
-      return `<tr><td class="num">${n+1}</td><td title="${sk(k)}"><span class="nm"><span class="sw" style="background:${col(sk(k))}"></span>${nm(k)}<span class="tk">${k}</span></span></td><td class="num">${w.toFixed(2)}%${d}</td></tr>`;}).join('')+'</tbody>';
+    const r2=v=>Math.round(v*100)/100, top=r.items.slice(0,10), topR=top.map(x=>r2(x[1])), topSum=r2(topR.reduce((a,b)=>a+b,0)), other=r2(100-topSum);
+    const segs=top.map((x,n)=>({n:nm(x[0]),v:topR[n],c:`var(--p${n+1})`})).concat([{n:`나머지 ${r.items.length-10}종목·현금`,v:other,c:'var(--other)'}]);
+    $('hmDonut').innerHTML=donutSVG(segs,topSum,other);
+    $('hmTopCap').textContent=p?`비중 아래 숫자는 ${+p.month.slice(5,7)}월 대비`:'';
+    const dl=(k,w)=>!pw?'':pw[k]==null?'<span class="d up">신규</span>':(x=>`<span class="d ${x.c}">${x.t}</span>`)(sig(w-pw[k]));
+    const pOther=pw?100-top.reduce((a,x)=>a+(pw[x[0]]||0),0):null;
+    $('hmTop').innerHTML=`<thead><tr><th>순위</th><th>종목</th><th>섹터</th><th>비중</th></tr></thead><tbody>`+top.map(([k,w],n)=>
+      `<tr><td class="num">${n+1}</td><td><span class="nm"><span class="sw" style="background:var(--p${n+1})"></span>${nm(k)}<span class="tk">${k}</span></span></td><td>${sk(k)}</td><td class="num">${topR[n].toFixed(2)}%${dl(k,w)}</td></tr>`).join('')
+      +`<tr class="other"><td>–</td><td><span class="nm"><span class="sw" style="background:var(--other)"></span>기타<span class="tk">나머지 ${r.items.length-10}종목·현금</span></span></td><td>–</td><td class="num">${other.toFixed(2)}%${pOther!=null?(x=>`<span class="d ${x.c}">${x.t}</span>`)(sig(other-pOther)):''}</td></tr>`
+      +`<tr class="sum"><td></td><td>합계</td><td></td><td class="num">100.00%</td></tr></tbody>`;
     if(!p){$('hmMoves').innerHTML='<div class="hmmv cap">기록이 시작된 달이라 비교할 직전 달이 없습니다.</div>';}
     else{
       const a=new Set(r.items.map(x=>x[0])), b=new Set(p.items.map(x=>x[0]));
