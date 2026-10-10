@@ -185,6 +185,9 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 #krq{table-layout:fixed;min-width:640px}
 #krq th:first-child,#krq td:first-child{width:96px}
 #krq td .d{white-space:normal}
+.knote{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.65;color:var(--ink)}
+.knote p{margin:0 0 6px} .knote p:last-child{margin:0;color:var(--muted)} .knote .kh{font-weight:700;font-size:14.5px}
+.knote ol{margin:4px 0 8px;padding-left:20px;display:flex;flex-direction:column;gap:4px} .knote ol b{font-weight:600}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 </style>
@@ -300,6 +303,15 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
     <div class="panel scroll"><table id="krtable"></table></div>
     <div class="panel"><div class="scroll"><table id="krq"></table></div><button type="button" class="htoggle" id="krqToggle" aria-expanded="false"></button></div>
     <span class="cap">네 종목 모두 같은 지수(Dow Jones U.S. Dividend 100)를 따라가며 매월 분배합니다. 분기 합계는 분배 기준일이 속한 분기로 묶었습니다. 작은 숫자는 작년 같은 분기 대비이며, 분배 횟수가 다르면 계산하지 않고 이유를 표시합니다.</span>
+    <div class="knote">
+      <p class="kh">ACE 미국배당다우존스는 왜 '비교 불가'가 많나요?</p>
+      <p>분배 방식이 두 번 바뀌어서, 바뀐 전후 분기는 작년 같은 분기와 분배 횟수가 다릅니다.</p>
+      <ol>
+        <li><b>분기 1회 → 매월 1회</b><br>2023년 4월까지는 분기마다 1번(1·4·7·10월 말), 2023년 7월부터 매월 말 분배</li>
+        <li><b>기준일 월말 → 매월 중순</b><br>2024년 9월부터 매월 중순 분배로 바뀌면서 2024년 8월 분배가 없었습니다(7/30 다음이 9/12)</li>
+      </ol>
+      <p>그래서 2023 Q3 ~ 2024 Q3, 2025 Q3은 증감률을 내지 않았습니다. 그대로 계산하면 2023 Q3이 +146%(1회 65원 → 3회 160원), 2024 Q3이 −38%(3회 → 2회)처럼 배당 증감이 아닌 분배 시점 변화가 숫자에 섞입니다. 2025 Q4부터는 작년과 같은 월 1회라 정상 비교됩니다.</p>
+    </div>
   </section>
 
   <footer class="notes">
