@@ -88,6 +88,7 @@ src=[
  ('지급일 환율','하나은행 고시 매매기준율 (다음금융 일별 환율, 지급일 당일 최종 회차)'),
  ('국내 SCHD형 분배금','FunETF 분배금 이력 (기준일·분배금·분배율) — 운용사 공시와 같은 원천'),
  ('총보수',KRJ['fee_source']),
+ ('구성종목·월별 비중','Schwab 공식 보유종목 CSV(SCHD_FundHoldings, 2021-09부터 공개) — 매일 자동 수집(못 받은 날은 마지막 보유 주식 수 × Yahoo 종가로 계산). [월별_비중]·[월별_섹터]는 매월 첫 거래일 기록'),
 ]
 for k,v in src:
     G.cell(r,2,k).font=f_n; c=G.cell(r,3,v); c.font=f_n; c.alignment=Alignment(wrap_text=True); r+=1
@@ -467,7 +468,9 @@ SK=[('Consumer Staples','필수소비재'),('Health Care','헬스케어'),('Ener
 H['A1']='SCHD 구성종목'; H['A1'].font=f_t
 H['A2']='기준일'; H['A2'].font=f_b
 H['B2']=dt.date.fromisoformat(HOLDJ['asOf']); H['B2'].font=f_in; H['B2'].fill=key_fill; H['B2'].number_format=DATE
-H['C2']='← Schwab 공식 보유종목 CSV 기준일. 자동 갱신 시 매주 최신 목록으로 바뀝니다.'; H['C2'].font=f_s
+_off=(HOLDJ.get('official') or {}).get('asOf',HOLDJ['asOf'])
+H['C2']=(f'← 이 날 종가로 계산한 비중. 그날 공식 파일을 못 받아 Schwab 공식 보유종목 CSV({_off})의 보유 주식 수 × 종가로 계산했습니다.'
+         if HOLDJ.get('basis')=='computed' else '← Schwab 공식 보유종목 CSV 기준일. 매일 자동으로 최신 파일을 받습니다.'); H['C2'].font=f_s
 # 전체 목록 (H~L)
 hs=4
 for j,tl in enumerate(['티커','비중','종목명(영문)','섹터(GICS)','한글명','섹터(한글)'],8):
@@ -564,7 +567,48 @@ pc.series[0].marker.symbol='none'; pc.legend=None; pc.y_axis.numFmt='$0'; pc.x_a
 pc.y_axis.delete=False; pc.x_axis.delete=False
 P.add_chart(pc,'H3')
 
-wb._sheets=[wb[n] for n in ['사용법','최신분기_요약','SCHD_배당','연도별','분기표','국내SCHD형_분배','국내SCHD형_비교','구성종목','주가_월별','차트데이터']]
+# ---------------- 월별 비중 (매월 첫 거래일) ----------------
+HMJ=J('holdings_monthly'); MS=HMJ['months']; SKD=dict(SK)
+M=wb.create_sheet('월별_비중')
+M['A1']='SCHD 월별 구성종목 비중 (매월 첫 거래일)'; M['A1'].font=f_t
+M['A2']=f"{MS[0]['month']} ~ {MS[-1]['month']} · Schwab 공식 보유종목 CSV(official) / 공식 보유 주식 수 × 종가 계산(computed) · 빈칸 = 그 달엔 보유하지 않음"; M['A2'].font=f_s
+hr=4
+for j,(tl,w) in enumerate([('티커',8),('종목',24),('섹터',12)],1):
+    c=M.cell(hr,j,tl); c.font=f_hd; c.fill=hd_fill; c.alignment=C; M.column_dimensions[L(j)].width=w
+for k,m in enumerate(MS):
+    c=M.cell(hr,4+k,f"{m['month']}\n{m['asOf'][5:]}"); c.font=f_hd; c.fill=hd_fill; c.alignment=C
+    M.cell(hr-1,4+k,m['basis']).font=f_s
+    M.column_dimensions[L(4+k)].width=8.5
+M.row_dimensions[hr].height=30
+W={m['month']:{x[0]:x[1] for x in m['items']} for m in MS}
+lastw=W[MS[-1]['month']]
+syms=sorted(HMJ['names'],key=lambda k:(-lastw.get(k,-1),-max(W[m['month']].get(k,0) for m in MS)))
+for i,k in enumerate(syms):
+    rr=hr+1+i; nm,sec=HMJ['names'][k]
+    M.cell(rr,1,k).font=f_n; M.cell(rr,2,KN.get(k) or nm.title()).font=f_n; M.cell(rr,3,SKD.get(sec,sec)).font=f_n
+    for kk,m in enumerate(MS):
+        v=W[m['month']].get(k)
+        if v is not None:
+            c=M.cell(rr,4+kk,v/100); c.number_format='0.00%'; c.font=f_in
+    if i%2: 
+        for col in range(1,4+len(MS)): M.cell(rr,col).fill=band
+M.freeze_panes=M.cell(hr+1,4)
+S2=wb.create_sheet('월별_섹터')
+S2['A1']='SCHD 월별 섹터 비중 (매월 첫 거래일)'; S2['A1'].font=f_t
+secs=[k for _,k in SK]
+header(S2,3,['월','기준일','방식']+secs+['현금'],[9,12,9]+[11]*(len(secs)+1))
+for i,m in enumerate(MS):
+    rr=4+i; agg={}
+    for kk,w,*_ in m['items']:
+        sk_=SKD.get(HMJ['names'][kk][1],HMJ['names'][kk][1]); agg[sk_]=agg.get(sk_,0)+w
+    S2.cell(rr,1,m['month']); S2.cell(rr,2,dt.date.fromisoformat(m['asOf'])).number_format=DATE; S2.cell(rr,3,m['basis']).font=f_s
+    for j,sname in enumerate(secs):
+        if agg.get(sname): c=S2.cell(rr,4+j,agg[sname]/100); c.number_format='0.00%'; c.font=f_in
+    c=S2.cell(rr,4+len(secs),m.get('cash',0)/100); c.number_format='0.00%'; c.font=f_in
+    for col in range(1,5+len(secs)): S2.cell(rr,col).border=bd
+S2.freeze_panes='D4'
+
+wb._sheets=[wb[n] for n in ['사용법','최신분기_요약','SCHD_배당','연도별','분기표','국내SCHD형_분배','국내SCHD형_비교','구성종목','월별_비중','월별_섹터','주가_월별','차트데이터']]
 wb.calculation.fullCalcOnLoad=True
 out=ROOT/'downloads'/'schd_dividend_tracker.xlsx'
 wb.save(out); print(out)

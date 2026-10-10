@@ -22,6 +22,9 @@ from pathlib import Path
 
 import requests
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import holdings_lib as HL  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 RUN = ROOT / ".run"
@@ -54,19 +57,39 @@ def save(name, obj):
     (DATA / f"{name}.json").write_text(json.dumps(obj, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
 
+_browser = None
+
+
+def _browser_session():
+    """Schwab(Akamai)은 일반 파이썬 요청을 403으로 막고 실제 브라우저의 접속 방식(TLS 지문)은 통과시킨다.
+    curl_cffi 로 크롬처럼 접속한다. 설치돼 있지 않으면 None."""
+    global _browser
+    if _browser is None:
+        try:
+            from curl_cffi import requests as cr
+            _browser = cr.Session(impersonate="chrome")
+        except Exception:  # noqa: BLE001
+            _browser = False
+    return _browser or None
+
+
 def get(url, *, referer=None, timeout=30, tries=3):
     h = {"User-Agent": UA, "Accept": "text/html,application/json,text/csv,*/*",
          "Accept-Language": "en-US,en;q=0.9,ko;q=0.8"}
     if referer:
         h["Referer"] = referer
+    browser = _browser_session() if "schwabassetmanagement.com" in url else None
     last = None
     for i in range(tries):
         try:
-            r = requests.get(url, headers=h, timeout=timeout)
+            if browser:
+                r = browser.get(url, headers={"Referer": referer} if referer else None, timeout=timeout)
+            else:
+                r = requests.get(url, headers=h, timeout=timeout)
             if r.status_code == 200 and r.content:
                 return r
             last = f"HTTP {r.status_code}"
-        except requests.RequestException as e:  # 네트워크 오류는 재시도
+        except Exception as e:  # noqa: BLE001  네트워크 오류는 재시도
             last = str(e)
         time.sleep(2 * (i + 1))
     raise RuntimeError(f"{url} → {last}")
@@ -251,37 +274,145 @@ def update_prices(force=False):
 
 
 # ---------------------------------------------------------------- 구성종목
+# 보유 주식 수는 Schwab 공식 파일 기준(매일 시도). 못 받으면 stockanalysis 상위 25종목으로 리밸런싱을 감지해 보정.
+# 비중은 매일 '보유 주식 수 × 그날 종가'로 다시 계산하고, 매월 첫 거래일 비중은 holdings_monthly.json 에 남긴다.
+# Schwab 파일과 같은 날 종가로 계산하면 공식 비중과 소수점 넷째 자리까지 같다(2026-09/10 대조).
+OFFICIAL_STALE_DAYS = 30  # 공식 파일을 이만큼 못 받으면 '확인 필요' 이슈
+SA_URL = "https://stockanalysis.com/etf/schd/holdings/"
+
+
+def fetch_official_holdings(h):
+    """새 공식 파일이 있으면 공식 기준(보유 주식 수·공식 비중)을 통째로 교체한다."""
+    page = schwab_page()
+    m = re.search(r"SCHD_FundHoldings_(\d{4}-\d{2}-\d{2})\.CSV", page)
+    if not m:
+        raise RuntimeError("상품 페이지에서 보유종목 CSV 링크를 찾지 못함")
+    if m.group(1) <= h["official"]["asOf"]:
+        return None
+    text = get(SCHWAB_HOLD.format(d=m.group(1)), referer=SCHWAB_PAGE).content.decode("utf-8-sig", errors="replace")
+    return HL.official_holdings(*HL.parse_schwab_csv(text))
+
+
+def refresh_top_shares(h):
+    """공식 파일을 못 받을 때의 보조: stockanalysis 무료 상위 25종목 보유 주식 수(Schwab 데이터와 같음)로
+    리밸런싱을 감지해 상위 종목 주식 수를 바꾼다. 바꿨으면 True."""
+    html = get(SA_URL).text
+    m = re.search(r"As of</span>\s*([A-Z][a-z]{2} \d{1,2}, \d{4})", html)
+    if not m:
+        raise RuntimeError("stockanalysis 기준일을 찾지 못함")
+    as_of = dt.datetime.strptime(m.group(1), "%b %d, %Y").date().isoformat()
+    base_day = max(h["official"]["asOf"], (h.get("top") or {}).get("asOf", ""))
+    if as_of <= base_day:
+        return False
+    sa = {x.group(1): float(x.group(2).replace(",", ""))
+          for x in re.finditer(r's:"\$([A-Z0-9.\-]+)",as:"[\d.]+%",sh:"([\d,]+)"', html)}
+    if len(sa) < 20:
+        raise RuntimeError(f"stockanalysis 상위 종목이 {len(sa)}개뿐")
+    base = {i["symbol"]: i["shares"] for i in h["items"] if HL.is_stock(i)}
+    ratios = sorted(sa[k] / base[k] for k in sa if base.get(k))
+    if len(ratios) < 15:
+        raise RuntimeError("stockanalysis 종목과 기존 종목이 너무 다름")
+    med = ratios[len(ratios) // 2]
+    moved = [k for k in sa if not base.get(k) or abs(sa[k] / base[k] / med - 1) > 0.005]
+    h["top"] = dict(asOf=as_of, source="stockanalysis 상위 25종목", checked=TODAY.isoformat())
+    if not moved:
+        return True  # 리밸런싱 없음 (주식 수 그대로) — 확인 날짜만 갱신
+    names = HL.load("holdings_monthly")["names"]
+    items = {i["symbol"]: i for i in h["items"]}
+    for k, v in sa.items():
+        if k in items:
+            items[k] = {**items[k], "shares": round(v / med, 4)}
+        else:  # 상위 25에 새로 들어온 종목
+            nm, sec = names.get(k, [k, "Unclassified"])
+            items[k] = dict(symbol=k, weight=0.0, name=nm, sector=sec, shares=round(v / med, 4), officialWeight=0.0)
+    h["items"] = list(items.values())
+    notes.append(f"stockanalysis {as_of} 상위 종목 주식 수가 바뀌어(리밸런싱 추정) 반영: {', '.join(moved)}")
+    return True
+
+
+def compute_weights(h):
+    """공식 보유 주식 수 × 최근 종가로 비중 계산. 새 종가 날짜가 없으면 None."""
+    import pandas as pd
+    import yfinance as yf
+    off = h["official"]["asOf"]
+    stocks = [i for i in h["items"] if HL.is_stock(i)]
+    tick = {i["symbol"]: HL.yahoo(i["symbol"]) for i in stocks}
+    start = (dt.date.fromisoformat(off) - dt.timedelta(days=7)).isoformat()
+    px = yf.download(sorted(set(tick.values())), start=start, progress=False, auto_adjust=False,
+                     actions=True, threads=True)
+    close = px["Close"]
+    splits = px["Stock Splits"] if "Stock Splits" in px.columns.get_level_values(0) else None
+    valid = close.notna().sum(axis=1)
+    ok = valid[valid >= 0.9 * close.shape[1]]
+    if ok.empty:
+        raise RuntimeError("종가가 충분히 받아지지 않음")
+    P = ok.index[-1]
+    pday = P.strftime("%Y-%m-%d")
+    if pday <= off or (h.get("basis") == "computed" and h["asOf"] == pday):
+        return None
+    mv, missing, stale = {}, [], []
+    for i in stocks:
+        t = tick[i["symbol"]]
+        ser = close[t][close.index <= P].dropna() if t in close.columns else pd.Series(dtype=float)
+        if ser.empty:
+            missing.append(i)
+            continue
+        if ser.index[-1] != P:
+            stale.append(i["symbol"])
+        f = 1.0
+        if splits is not None and t in splits.columns:
+            sp = splits[t][(splits.index > pd.Timestamp(off)) & (splits.index <= P)]
+            for v in sp:
+                if v and v == v:
+                    f *= float(v)
+        mv[i["symbol"]] = i["shares"] * f * float(ser.iloc[-1])
+    cash = sum(i["shares"] for i in h["items"] if HL.is_cash(i))
+    gone = sum(i["officialWeight"] for i in missing) / 100
+    if gone > 0.05:
+        raise RuntimeError(f"종가를 못 받은 종목 비중이 너무 큼 ({gone * 100:.1f}%): " + ", ".join(i["symbol"] for i in missing))
+    total = (sum(mv.values()) + cash) / (1 - gone)
+    for i in missing:
+        mv[i["symbol"]] = i["officialWeight"] / 100 * total
+    items = []
+    for i in h["items"]:
+        w = mv[i["symbol"]] / total * 100 if HL.is_stock(i) else (i["shares"] / total * 100 if HL.is_cash(i) else 0.0)
+        items.append({**i, "weight": round(w, 6)})
+    items.sort(key=lambda x: -x["weight"])
+    if missing or stale:
+        notes.append("비중 계산: " + (f"종가 없음(공식 비중 유지) {', '.join(i['symbol'] for i in missing)} " if missing else "")
+                     + (f"최근 종가가 {pday} 이전 {', '.join(stale)}" if stale else ""))
+    return {**h, "asOf": pday, "basis": "computed", "items": items}
+
+
 def update_holdings(force=False):
-    h = load("holdings")
-    # Schwab은 GitHub 서버 접속을 막는 경우가 많다(403). 실패해도 이슈를 만들지 않고,
-    # 30일이 지나도록 못 받았을 때만 '확인 필요'로 알린다.
-    age = (TODAY - dt.date.fromisoformat(h["asOf"])).days
-    if not force and age < 6:
-        return
+    h = HL.load("holdings")
+    age = (TODAY - dt.date.fromisoformat(h["official"]["asOf"])).days
     try:
-        page = schwab_page()
-        m = re.search(r"SCHD_FundHoldings_(\d{4}-\d{2}-\d{2})\.CSV", page)
-        if not m:
-            raise RuntimeError("상품 페이지에서 보유종목 CSV 링크를 찾지 못함")
-        as_of = m.group(1)
-        if as_of <= h["asOf"]:
-            return
-        text = get(SCHWAB_HOLD.format(d=as_of), referer=SCHWAB_PAGE).content.decode("utf-8-sig", errors="replace")
-        items = []
-        for row in csv.DictReader(io.StringIO(text)):
-            if (row.get("As-Of-Date") or "").strip() != as_of:
-                continue
-            items.append(dict(symbol=row["Symbol"].strip(), weight=round(float(row["Percent of Assets"]), 6),
-                              name=row["Name"].strip(), sector=(row.get("Sector") or "").strip()))
-        total = sum(i["weight"] for i in items)
-        if len(items) < 50 or not 98 <= total <= 102:
-            raise RuntimeError(f"보유종목 검증 실패 (종목 {len(items)}개, 비중 합 {total:.2f}%)")
-        items.sort(key=lambda x: -x["weight"])
-        save("holdings", dict(asOf=as_of, source=h["source"], items=items))
-        changed.append("holdings")
+        new = fetch_official_holdings(h)  # 매일 시도 (크롬처럼 접속하면 GitHub에서도 받아짐)
+        if new:
+            h = new
+            changed.append("holdings")
     except Exception as e:  # noqa: BLE001
-        msg = f"구성종목 수집 실패: {e} (현재 데이터 기준일 {h['asOf']}, {age}일 경과)"
-        (errors if age >= 30 else notes).append(msg)
+        msg = f"구성종목 공식 파일 수집 실패: {e} (보유 주식 수 기준일 {h['official']['asOf']}, {age}일 경과)"
+        (errors if age >= OFFICIAL_STALE_DAYS else notes).append(msg)
+        try:
+            if refresh_top_shares(h):
+                changed.append("holdings")
+        except Exception as e2:  # noqa: BLE001
+            notes.append(f"stockanalysis 상위 종목 확인 실패: {e2}")
+    try:
+        new = compute_weights(h)
+        if new:
+            h = new
+            changed.append("holdings")
+    except Exception as e:  # noqa: BLE001
+        notes.append(f"구성종목 비중 계산 실패: {e} (기존 비중 유지)")
+    if "holdings" in changed:
+        HL.save("holdings", h)
+        monthly = HL.load("holdings_monthly")
+        if HL.add_month(monthly, h["asOf"], h["items"], h["basis"]):
+            HL.save_monthly(monthly)
+            changed.append("holdings_monthly")
 
 
 # ---------------------------------------------------------------- 공식 수익률·분배 일정
