@@ -43,6 +43,7 @@ GitHub Actions가 매일 새 데이터를 확인해 자동으로 갱신합니다
 - 주식분할이 생기면 `data/meta.json`의 `splits`에 `{"date": "분할일", "ratio": 배수}`를 추가합니다.
 - 보유 주식 수를 손으로 넣을 때(자동 수집이 계속 막힐 때만): Schwab 상품 페이지 Holdings → Export All Holdings로 받은 CSV를 `python scripts/import_holdings.py 파일.CSV`.
 - 국내 ETF 총보수가 바뀌면 `data/kr_etf.json`의 `fee`와 `fee_source`를 고칩니다.
+- 국내 SCHD형 ETF를 새로 추가하면 `data/kr_etf.json`에 상장일 `listed`(YYYY-MM-DD)도 넣습니다. 분기 합계 표의 '상장 전 / 상장 후 첫 분배 전' 구분에 씁니다.
 - Actions 탭 → `SCHD 데이터 자동 갱신` → `Run workflow`로 언제든 수동 실행할 수 있습니다.
 
 ## 로컬에서 보기
