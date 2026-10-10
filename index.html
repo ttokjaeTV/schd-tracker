@@ -351,8 +351,6 @@ const S=[
   `${vbars(g10.map(a=>a.g),v=>v<0?'var(--down)':'var(--up)')}<div class="ax"><span>${g10[0].y}</span><span>${g10[g10.length-1].y}</span></div><div class="ax"><span>최저 ${gMin.y}년 ${pct(gMin.g,1)}</span><span>최고 ${gMax.y}년 ${pct(gMax.g,1)}</span></div>`],
  ['연간 배당 연속 증가',`${lastFull.streak}년`,'',stBase?`${stBase.y}년 ${usd(stBase.tot)} → ${lastFull.y}년 ${usd(lastFull.tot)}, <b>${(lastFull.tot/stBase.tot).toFixed(1)}배</b>로 증가`:`${streakYs[0].y}년부터 ${lastFull.y}년까지 매년 증가`,
   `<div class="strip">${streakYs.map(a=>`<i class="${a.g<0?'dn':''}" title="${a.y}년 ${pct(a.g,1)}"></i>`).join('')}</div><div class="ax"><span>${streakYs[0].y}</span><span>${lastFull.y}</span></div>`
-  +`<div class="hb"><span>배당귀족</span><span class="tr"><i style="width:${Math.min(lastFull.streak/25,1)*100}%;background:var(--up)"></i></span><b>${lastFull.streak}/25</b></div>`
-  +`<div class="ax"><span>배당귀족: 25년 이상 연속으로 배당을 늘린 S&amp;P500 기업</span></div>`
   +`<div class="hint">${stAll?`집계 기간 내내 <b>한 해도 빠짐없이</b> 늘었고, `:''}가장 덜 늘어난 해도 <b>${stMin.y}년 ${pct(stMin.g,1)}</b>입니다</div>`],
  ['전년 동기 대비 인하',`${cuts.length}회`,'',`${R[0].y}년 이후 ${R.length}회 배당 중`,
   `<div class="chips2">${cuts.slice().reverse().map(r=>`<span><b>${String(r.y).slice(2)}년 Q${r.q}</b>${pct(r.yoy,1)}</span>`).join('')}</div><div class="hint">분기 인하는 있었지만 <b>연간 배당이 줄어든 해는 ${downYears}번</b>입니다</div>`],
