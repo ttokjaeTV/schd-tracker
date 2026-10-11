@@ -329,7 +329,7 @@ V.cell(sr,7,f'=COUNTIFS({RNG("C")},">"&EDATE($B$3,-12),{RNG("C")},"<="&$B$3)')
 V.cell(sr,8,f'=INDEX({RNG("J")},MATCH(E{sr},{RNG("C")},0))').number_format=USD4
 V.cell(sr,9,f'=INDEX({RNG("L")},MATCH(E{sr},{RNG("C")},0))').number_format=PCT
 for col in range(1,10): V.cell(sr,col).border=bd
-V.cell(sr+1,1,'※ SCHD 행: 금액은 USD, 수익률은 최근 4회 배당 ÷ 배당락일 종가. 0.06%는 Schwab 공시 운용보수(매매비용 별도)라 국내 ETF 실부담비용과 기준이 다릅니다.').font=f_s
+V.cell(sr+1,1,'※ SCHD 행: 금액은 USD, 수익률은 최근 4회 배당 ÷ 배당락일 종가. 0.06%는 Schwab 공시 총보수(펀드 내부 매매비용 미포함)라 국내 ETF 실부담비용과 기준이 다릅니다. 투자자가 내는 증권사 수수료·환전 비용은 양쪽 모두 제외.').font=f_s
 _cb=max((v['basis'] for v in cost.values() if v),default='')
 V.cell(sr+2,1,f"※ 국내 ETF 실부담비용 = 총보수 + 기타비용 + 매매·중개수수료(+판매수수료), 금융투자협회 공시 {_cb} 기준. 셀 메모에 항목별 금액.").font=f_s
 V.cell(sr+3,1,'※ 국내상장 해외주식형 ETF 분배금은 배당소득세 15.4% 과세 (연금저축·IRP·ISA에서는 과세이연/비과세 혜택).').font=f_s
