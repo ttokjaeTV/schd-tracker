@@ -188,6 +188,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 .knote{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.65;color:var(--ink)}
 .knote p{margin:0 0 6px} .knote p:last-child{margin:0;color:var(--muted)} .knote .kh{font-weight:700;font-size:14.5px}
 .knote ol{margin:4px 0 8px;padding-left:20px;display:flex;flex-direction:column;gap:4px} .knote ol b{font-weight:600}
+.rbnote{margin:0} .rbnote b{color:var(--ink);font-weight:600}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 </style>
@@ -277,8 +278,9 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
   </section>
 
   <section class="sec" id="hmSec">
-    <div class="sec-head"><h2>월별 비중 기록</h2><span class="cap" id="hmCap"></span></div>
-    <div class="hmbar"><label for="hmSel" class="cap">기준 달</label><select id="hmSel"></select><span class="cap" id="hmBasis"></span></div>
+    <div class="sec-head"><h2>월별·리밸런싱 비중 기록</h2><span class="cap" id="hmCap"></span></div>
+    <div class="hmbar"><label for="hmSel" class="cap">기준</label><select id="hmSel"></select><span class="cap" id="hmBasis"></span></div>
+    <p class="cap rbnote" id="hmRebal"></p>
     <div class="hold">
       <div class="hcol">
         <div class="panel donut-wrap"><svg id="hmDonut" viewBox="0 0 300 300" role="img" aria-label="선택한 달의 SCHD 상위 10종목과 기타 비중 도넛 차트"></svg></div>
@@ -694,13 +696,27 @@ const sectorRows=rows=>{const mx=Math.max(...rows.map(r=>r[1]));
   const SEC=Object.keys(Object.assign({},...MS.map(secOf))).sort((a,b)=>(last[b]||0)-(last[a]||0));
   const col=s=>{const i=SEC.indexOf(s);return i<10?`var(--p${i+1})`:'var(--other)';};
   $('hmCap').textContent=`${MS[0].month} ~ ${MS[MS.length-1].month} · ${MS.length}개월 · Schwab 공시 기준`;
-  $('hmSel').innerHTML=[...MS].reverse().map(r=>`<option value="${r.month}">${ym(r.month)} (${md(r.asOf)})</option>`).join('');
+  const DOW='일월화수목금토', dw=s=>DOW[new Date(s+'T00:00:00').getDay()];
+  const RB=(HM.rebalances||[]).map(x=>({key:'R:'+x.effective,x,asOf:x.date,basis:'official',cash:x.cash,items:x.items,
+    prev:{asOf:x.before,cash:x.beforeCash,items:x.beforeItems,label:`${md(x.before)}(${dw(x.before)})`}}));
+  const kindName=k=>k==='annual'?'정기 종목 교체':'분기 비중 재조정';
+  $('hmSel').innerHTML=`<optgroup label="월별 기록 (매월 첫 거래일)">${[...MS].reverse().map(r=>`<option value="${r.month}">${ym(r.month)} (${md(r.asOf)})</option>`).join('')}</optgroup>`
+    +(RB.length?`<optgroup label="리밸런싱일 (직전 거래일 대비)">${[...RB].reverse().map(r=>`<option value="${r.key}">${r.x.effective.slice(0,4)}년 ${+r.x.effective.slice(5,7)}월 ${+r.x.effective.slice(8)}일 · ${kindName(r.x.kind)}</option>`).join('')}</optgroup>`:'');
+  // 다음 리밸런싱일: 3·6·9·12월 셋째 금요일 다음 월요일
+  const nextRb=(()=>{const t=new Date();t.setHours(0,0,0,0);for(let y=t.getFullYear(),m=t.getMonth()+1;;){if(m%3===0){const d=new Date(y,m-1,1);d.setDate(1+((5-d.getDay()+7)%7)+14+3);if(d>=t)return [d,m];}m++;if(m>12){m=1;y++;}}})();
+  const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  $('hmRebal').innerHTML=`리밸런싱은 매년 3·6·9·12월 셋째 금요일 장 마감 후 반영돼 <b>다음 월요일</b>부터 적용됩니다(3월은 종목 교체 + 비중, 나머지는 비중만). 다음 리밸런싱: <b>${ymd(nextRb[0])}(월) · ${kindName(nextRb[1]===3?'annual':'quarterly')}</b>`
+    +(RB.length?` · 기록 ${RB.length}회(${RB[0].x.effective.slice(0,7)}~)`:'');
   const sig=d=>{const r=Math.round(d*100)/100;const c=r>0?'up':r<0?'down':'flat';return{c,t:`${r>0?'+':r<0?'−':''}${Math.abs(r).toFixed(2)}%p`};};
   const draw=mo=>{
-    const i=MS.findIndex(r=>r.month===mo), r=MS[i], p=i>0?MS[i-1]:null;
+    let r,p,isRb=mo.startsWith('R:');
+    if(isRb){r=RB.find(z=>z.key===mo);p=r.prev;}
+    else{const i=MS.findIndex(z=>z.month===mo);r=MS[i];p=i>0?{...MS[i-1],label:`${+MS[i-1].month.slice(5,7)}월`}:null;}
     $('hmSel').value=mo;
-    $('hmBasis').textContent=`${r.asOf} 기준 · ${r.basis==='official'?'Schwab 공시 비중':'공시 주식 수 × 종가 계산'}`;
-    $('hmVs').textContent=p?`${+p.month.slice(5,7)}월 대비`:'';
+    $('hmBasis').textContent=isRb
+      ?`${r.x.effective}(${dw(r.x.effective)}) 적용 · ${kindName(r.x.kind)} · 비중은 ${r.asOf} Schwab 공시${r.asOf!==r.x.effective?' (적용 당일 파일은 새 종목 비중이 비어 있어 다음 거래일 기준)':''}`
+      :`${r.asOf} 기준 · ${r.basis==='official'?'Schwab 공시 비중':'공시 주식 수 × 종가 계산'}`;
+    $('hmVs').textContent=p?`${p.label} 대비`:'';
     const sc=secOf(r), sp=p?secOf(p):{};
     if(r.cash) sc['현금·선물']=(sc['현금·선물']||0)+r.cash;
     $('hmSectors').innerHTML=sectorRows(Object.entries(sc).sort((a,b)=>(a[0]==='현금·선물')-(b[0]==='현금·선물')||b[1]-a[1]).map(([k,v])=>{
@@ -709,7 +725,7 @@ const sectorRows=rows=>{const mx=Math.max(...rows.map(r=>r[1]));
     const r2=v=>Math.round(v*100)/100, top=r.items.slice(0,10), topR=top.map(x=>r2(x[1])), topSum=r2(topR.reduce((a,b)=>a+b,0)), other=r2(100-topSum);
     const segs=top.map((x,n)=>({n:nm(x[0]),v:topR[n],c:`var(--p${n+1})`})).concat([{n:`나머지 ${r.items.length-10}종목·현금`,v:other,c:'var(--other)'}]);
     $('hmDonut').innerHTML=donutSVG(segs,topSum,other);
-    $('hmTopCap').textContent=p?`비중 아래 숫자는 ${+p.month.slice(5,7)}월 대비`:'';
+    $('hmTopCap').textContent=p?`비중 아래 숫자는 ${p.label} 대비`:'';
     const dl=(k,w)=>!pw?'':pw[k]==null?'<span class="d up">신규</span>':(x=>`<span class="d ${x.c}">${x.t}</span>`)(sig(w-pw[k]));
     const pOther=pw?100-top.reduce((a,x)=>a+(pw[x[0]]||0),0):null;
     $('hmTop').innerHTML=`<thead><tr><th>순위</th><th>종목</th><th>섹터</th><th>비중</th></tr></thead><tbody>`+top.map(([k,w],n)=>
@@ -723,9 +739,9 @@ const sectorRows=rows=>{const mx=Math.max(...rows.map(r=>r[1]));
       const chip=(x,c)=>`<span class="t ${c}" title="${x[1].toFixed(2)}%">${nm(x[0])} <span class="num">${x[0]}</span></span>`;
       $('hmMoves').innerHTML=(ins.length||outs.length)
         ?`<div class="hmmv"><b>신규 편입 ${ins.length}</b>${ins.map(x=>chip(x,'in')).join('')||'<span class="cap">없음</span>'}</div><div class="hmmv"><b>편출 ${outs.length}</b>${outs.map(x=>chip(x,'out')).join('')||'<span class="cap">없음</span>'}</div>`
-        :`<div class="hmmv cap">직전 달과 종목 구성은 같고 비중만 바뀌었습니다.</div>`;
+        :`<div class="hmmv cap">${isRb?`${p.label}과 종목 구성은 같고 비중만 다시 맞췄습니다${r.x.reweighted?` (보유 주식 수가 바뀐 종목 ${r.x.reweighted}개)`:''}.`:'직전 달과 종목 구성은 같고 비중만 바뀌었습니다.'}</div>`;
     }
-    drawTrend(mo);
+    drawTrend(isRb?null:mo);
   };
   const drawTrend=sel=>{
     const W=1000,H=190,n=MS.length,bw=W/n; let g='';

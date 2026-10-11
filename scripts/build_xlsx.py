@@ -610,8 +610,26 @@ for i,m in enumerate(MS):
     c=S2.cell(rr,4+len(secs),m.get('cash',0)/100); c.number_format='0.00%'; c.font=f_in
     for col in range(1,5+len(secs)): S2.cell(rr,col).border=bd
 S2.freeze_panes='D4'
+# 리밸런싱일 (3·6·9·12월 셋째 금요일 다음 월요일 적용)
+RBL=HMJ.get('rebalances') or []
+RS=wb.create_sheet('리밸런싱')
+RS['A1']='SCHD 리밸런싱 기록 (직전 거래일 → 적용 후 공식 보유종목 비교)'; RS['A1'].font=f_t
+RS['A2']='매년 3·6·9·12월 셋째 금요일 장 마감 후 반영 → 다음 거래일(보통 월요일) 적용. 3월은 정기 종목 교체(+비중), 나머지는 비중 재조정. 3월 적용일 파일은 새 종목 비중이 비어 있어 다음 거래일 공시로 기록.'; RS['A2'].font=f_s
+header(RS,4,['적용일','구분','비교 기준\n(직전 거래일)','비중 공시일','편입','편출','주식 수\n바뀐 종목','편입 종목','편출 종목'],[12,14,12,12,6,6,9,60,60])
+nmk=lambda k:(KN.get(k) or HMJ['names'].get(k,[k])[0].title())
+for i,r in enumerate(RBL):
+    rr=5+i; A={x[0] for x in r['items']}; B={x[0] for x in r['beforeItems']}
+    vals=[dt.date.fromisoformat(r['effective']),'정기 종목 교체' if r['kind']=='annual' else '분기 비중 재조정',dt.date.fromisoformat(r['before']),dt.date.fromisoformat(r['date']),r['added'],r['removed'],r['reweighted'],
+          ', '.join(f"{nmk(k)}({k})" for k in [x[0] for x in r['items'] if x[0] not in B]),', '.join(f"{nmk(k)}({k})" for k in [x[0] for x in r['beforeItems'] if x[0] not in A])]
+    for j,v in enumerate(vals,1):
+        c=RS.cell(rr,j,v); c.font=f_n; c.border=bd
+        if j in (1,3,4): c.number_format=DATE
+        if j>=8: c.alignment=Alignment(wrap_text=True,vertical='top')
+    if r['kind']=='annual':
+        for j in range(1,10): RS.cell(rr,j).fill=band
+RS.freeze_panes='A5'
 
-wb._sheets=[wb[n] for n in ['사용법','최신분기_요약','SCHD_배당','연도별','분기표','국내SCHD형_분배','국내SCHD형_비교','구성종목','월별_비중','월별_섹터','주가_월별','차트데이터']]
+wb._sheets=[wb[n] for n in ['사용법','최신분기_요약','SCHD_배당','연도별','분기표','국내SCHD형_분배','국내SCHD형_비교','구성종목','월별_비중','월별_섹터','리밸런싱','주가_월별','차트데이터']]
 wb.calculation.fullCalcOnLoad=True
 out=ROOT/'downloads'/'schd_dividend_tracker.xlsx'
 wb.save(out); print(out)

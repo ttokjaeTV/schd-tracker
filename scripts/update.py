@@ -415,6 +415,63 @@ def update_holdings(force=False):
             changed.append("holdings_monthly")
 
 
+# ---------------------------------------------------------------- 리밸런싱일 기록
+def fetch_schwab_day(day):
+    """그날 Schwab 보유종목 파일 → (그날 파일이 있나, 검증 통과한 행 목록 또는 None).
+    휴장일이면 (False, None). 3월 적용일처럼 새 종목 비중이 비어 검증에 실패하면 (True, None)."""
+    try:
+        text = get(SCHWAB_HOLD.format(d=day.isoformat()), referer=SCHWAB_PAGE, tries=2).content.decode("utf-8-sig", errors="replace")
+    except Exception:  # noqa: BLE001
+        return False, None
+    if not re.search(rf"^\s*{day.isoformat()},", text, re.M):
+        return False, None
+    try:
+        as_of, rows = HL.parse_schwab_csv(text)
+        return True, (rows if as_of == day.isoformat() else None)
+    except Exception:  # noqa: BLE001
+        return True, None
+
+
+def update_rebalances():
+    """3·6·9·12월 리밸런싱(셋째 금요일 다음 월요일 적용)마다 직전 거래일·적용일 공식 비중을 남긴다.
+    아직 기록 안 된 리밸런싱이 있으면 그 두 날짜 파일을 받아 holdings_monthly.json 의 rebalances 에 추가."""
+    monthly = HL.load("holdings_monthly")
+    have = {r["thirdFriday"] for r in monthly.get("rebalances", [])}
+    todo = [x for x in HL.rebal_schedule(TODAY - dt.timedelta(days=1)) if x[2].isoformat() not in have]
+    added = []
+    for y, m, fri, mon in todo:
+        before = after = eff = None
+        for k in range(5):  # 셋째 금요일이 휴장이면 그 전 거래일
+            d = fri - dt.timedelta(days=k)
+            if d.weekday() < 5 and (before := fetch_schwab_day(d)[1]):
+                bday = d
+                break
+        for k in range(5):  # 적용일 = 셋째 금요일 다음 첫 거래일(보통 월요일). 비중은 검증 통과한 첫 파일
+            d = mon + dt.timedelta(days=k)
+            if d >= TODAY:
+                break
+            if d.weekday() >= 5:
+                continue
+            exists, rows = fetch_schwab_day(d)
+            if exists and eff is None:
+                eff = d
+            if rows:
+                after, aday = rows, d
+                break
+        if not (before and after):
+            notes.append(f"{y}년 {m}월 리밸런싱({mon}) 보유종목 파일을 아직 못 받음 — 다음 실행 때 다시 시도")
+            continue
+        rec = HL.make_rebalance("annual" if m == 3 else "quarterly", fri, eff or aday, before, after,
+                                bday.isoformat(), aday.isoformat(), monthly["names"])
+        monthly.setdefault("rebalances", []).append(rec)
+        added.append(f"{aday}({'종목 교체' if m == 3 else '비중 재조정'}, 편입 {rec['added']}·편출 {rec['removed']}·주식 수 변경 {rec['reweighted']})")
+    if added:
+        monthly["rebalances"].sort(key=lambda r: r["thirdFriday"])
+        HL.save_monthly(monthly)
+        changed.append("holdings_monthly")
+        notes.append("리밸런싱일 기록 추가: " + ", ".join(added))
+
+
 # ---------------------------------------------------------------- 공식 수익률·분배 일정
 def update_official(meta, force=False):
     """Schwab 상품 페이지의 30일 SEC 수익률·분배수익률(TTM)을 기준일과 함께 저장한다.
@@ -569,6 +626,7 @@ def main():
         update_prices(force="dividends" in changed)
     if a.only in (None, "holdings"):
         update_holdings(force=a.force_holdings)
+        update_rebalances()
     if a.only in (None, "kr_etf"):
         update_kr_etf()
         update_real_cost()
