@@ -20,7 +20,7 @@ def _sf(ex):
 rows=[dict(ex=d['ex'],rec=d['record'],pay=d['pay'],amt=d['amount'],split=_sf(d['ex']),close=d.get('close'),fx=d.get('fx'),src=d['source']) for d in J('dividends')]
 LAST=rows[-1]; MAXY=int(LAST['ex'][:4]); LASTQ=(int(LAST['ex'][5:7])+2)//3
 order=KRJ['order']; names={c:KRJ['etfs'][c]['name'] for c in order}
-fee={c:KRJ['etfs'][c]['fee'] for c in order}; timing={c:KRJ['etfs'][c]['timing'] for c in order}
+fee={c:KRJ['etfs'][c]['fee'] for c in order}; cost={c:KRJ['etfs'][c].get('cost') for c in order}; timing={c:KRJ['etfs'][c]['timing'] for c in order}
 kr={c:[dict(gijunYmd=h[0],divAmt=h[1],divRt=h[2]) for h in KRJ['etfs'][c]['history']] for c in order}
 _lk=max(KRJ['etfs'][c]['history'][-1][0] for c in order); _ky,_km=int(_lk[:4]),int(_lk[4:6])
 KR_ASOF=dt.date(_ky,_km,calendar.monthrange(_ky,_km)[1])
@@ -87,7 +87,8 @@ src=[
  ('배당락일 종가','Yahoo Finance 일별 종가 (2024.10.11 3:1 분할 반영, 배당 미조정)'),
  ('지급일 환율','하나은행 고시 매매기준율 (다음금융 일별 환율, 지급일 당일 최종 회차)'),
  ('국내 SCHD형 분배금','FunETF 분배금 이력 (기준일·분배금·분배율) — 운용사 공시와 같은 원천'),
- ('총보수',KRJ['fee_source']),
+ ('국내 ETF 실부담비용',KRJ.get('cost_source','')+' — 기준일은 [국내SCHD형_비교] 시트 메모'),
+ ('국내 ETF 총보수(참고)',KRJ['fee_source']),
  ('구성종목·월별 비중','Schwab 공식 보유종목 CSV(SCHD_FundHoldings, 2021-09부터 공개) — 매일 자동 수집(못 받은 날은 마지막 보유 주식 수 × Yahoo 종가로 계산). [월별_비중]·[월별_섹터]는 매월 첫 거래일 기록'),
 ]
 for k,v in src:
@@ -300,13 +301,14 @@ V['A3']='비교 기준일'; V['A3'].font=f_b
 V['B3']=KR_ASOF; V['B3'].font=f_in; V['B3'].fill=key_fill; V['B3'].number_format=DATE
 V['C3']='← 분기마다 분기 말일로 바꾸세요. 아래 표가 이 날짜 기준 최근 12개월로 다시 계산됩니다.'; V['C3'].font=f_s
 hrow=5
-header(V,hrow,['종목','코드','총보수\n(연)','분배\n시점','최근 분배일','최근 분배금','12개월\n분배 횟수','12개월\n분배금 합계','12개월\n분배율 합계'],[24,9,9,10,12,11,9,12,11])
+header(V,hrow,['종목','코드','실부담비용\n(연)','분배\n시점','최근 분배일','최근 분배금','12개월\n분배 횟수','12개월\n분배금 합계','12개월\n분배율 합계'],[24,9,9,10,12,11,9,12,11])
 V.row_dimensions[hrow].height=34
 for j,code in enumerate(order):
     rr=hrow+1+j
     V.cell(rr,1,names[code]).font=f_n
     c=V.cell(rr,2,code); c.number_format='@'; c.font=f_n
-    c=V.cell(rr,3,fee[code]); c.font=f_in; c.fill=in_fill; c.number_format='0.0000%'
+    c=V.cell(rr,3,round(cost[code]['real']/100,8) if cost[code] else fee[code]); c.font=f_in; c.fill=in_fill; c.number_format='0.0000%'
+    if cost[code]: V.cell(rr,3).comment=Comment(f"총보수 {cost[code]['total_fee']}% + 기타비용 {cost[code]['other']}% + 매매·중개수수료 {cost[code]['trading']}% (KOFIA {cost[code]['basis']})",'tracker')
     c=V.cell(rr,4,timing[code]); c.font=f_in; c.fill=in_fill
     V.cell(rr,5,f'=_xlfn.MAXIFS({KR("C")},{KR("A")},$B{rr},{KR("C")},"<="&$B$3)').number_format=DATE
     V.cell(rr,6,f'=SUMIFS({KR("D")},{KR("A")},$B{rr},{KR("C")},E{rr})').number_format=KRW0
@@ -327,8 +329,9 @@ V.cell(sr,7,f'=COUNTIFS({RNG("C")},">"&EDATE($B$3,-12),{RNG("C")},"<="&$B$3)')
 V.cell(sr,8,f'=INDEX({RNG("J")},MATCH(E{sr},{RNG("C")},0))').number_format=USD4
 V.cell(sr,9,f'=INDEX({RNG("L")},MATCH(E{sr},{RNG("C")},0))').number_format=PCT
 for col in range(1,10): V.cell(sr,col).border=bd
-V.cell(sr+1,1,'※ SCHD 행: 금액은 USD, 수익률은 최근 4회 배당 ÷ 배당락일 종가. 총보수 0.06%는 Schwab 공시.').font=f_s
-V.cell(sr+2,1,f"※ 국내 ETF 총보수: {KRJ['fee_source']}. 실부담비용(기타비용·매매중개수수료 포함)은 이보다 높습니다.").font=f_s
+V.cell(sr+1,1,'※ SCHD 행: 금액은 USD, 수익률은 최근 4회 배당 ÷ 배당락일 종가. 0.06%는 Schwab 공시 운용보수(매매비용 별도)라 국내 ETF 실부담비용과 기준이 다릅니다.').font=f_s
+_cb=max((v['basis'] for v in cost.values() if v),default='')
+V.cell(sr+2,1,f"※ 국내 ETF 실부담비용 = 총보수 + 기타비용 + 매매·중개수수료(+판매수수료), 금융투자협회 공시 {_cb} 기준. 셀 메모에 항목별 금액.").font=f_s
 V.cell(sr+3,1,'※ 국내상장 해외주식형 ETF 분배금은 배당소득세 15.4% 과세 (연금저축·IRP·ISA에서는 과세이연/비과세 혜택).').font=f_s
 
 # quarterly table

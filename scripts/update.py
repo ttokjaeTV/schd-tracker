@@ -476,6 +476,79 @@ def update_kr_etf():
         changed.append("kr_etf")
 
 
+# ---------------------------------------------------------------- 국내 SCHD형 실부담비용 (KOFIA)
+KOFIA_URL = "https://dis.kofia.or.kr/proframeWeb/XMLSERVICES/"
+
+
+def fetch_kofia_costs(basis):
+    """금융투자협회 전자공시 '펀드별 보수비용비교' (상장지수 펀드 전체). 단위 %. 미공개 기준일은 빈 목록."""
+    import xml.etree.ElementTree as ET
+    payload = ('<?xml version="1.0" encoding="utf-8"?><message><proframeHeader>'
+               '<pfmAppName>FS-DIS2</pfmAppName><pfmSvcName>DISFundFeeCmsSO</pfmSvcName>'
+               '<pfmFnName>select</pfmFnName></proframeHeader><systemHeader></systemHeader>'
+               f'<DISCondFuncDTO><tmpV30>{basis}</tmpV30><tmpV11></tmpV11><tmpV12>상장지수</tmpV12>'
+               '<tmpV3></tmpV3><tmpV5></tmpV5><tmpV4></tmpV4></DISCondFuncDTO></message>')
+    last = None
+    for i in range(4):  # 응답이 1.6MB라 중간에 끊기는 일이 잦다 → 재시도
+        try:
+            r = requests.post(KOFIA_URL, data=payload.encode("utf-8"), timeout=120,
+                              headers={"Content-Type": "application/xml; charset=UTF-8", "User-Agent": UA})
+            root = ET.fromstring(r.content.decode("utf-8"))
+            break
+        except Exception as e:  # noqa: BLE001
+            last = e
+            time.sleep(3 * (i + 1))
+    else:
+        raise RuntimeError(f"KOFIA 조회 실패: {last}")
+    num = lambda x: float(x) if x not in (None, "") else 0.0
+    out = {}
+    for m in root.findall(".//selectMeta"):
+        g = lambda t: ((m.find(t).text or "").strip() if m.find(t) is not None else "")
+        if not g("tmpV2"):
+            continue
+        ter, sales, trade = num(g("tmpV12")), num(g("tmpV13")) + num(g("tmpV14")), num(g("tmpV16"))
+        out[g("tmpV15")] = dict(total_fee=num(g("tmpV9")), other=num(g("tmpV11")), ter=ter, trading=trade,
+                                sales=sales, real=round(ter + sales + trade, 4))
+    return out
+
+
+def update_real_cost():
+    """월말 기준·약 한 달 뒤 공개. 저장된 기준일보다 새 달(지난달 말)이 공개됐으면 4종목 실부담비용을 바꾼다."""
+    k = load("kr_etf")
+    have = min((k["etfs"][c].get("cost") or {}).get("basis", "0000-00-00") for c in k["order"])
+    first = TODAY.replace(day=1)
+    month_end = first - dt.timedelta(days=1)          # 지난달 말일
+    if month_end.isoformat() <= have:
+        return
+    # 지난달 마지막 평일부터 거꾸로 (월말이 휴일이면 그 전 영업일이 기준일)
+    cands, d = [], month_end
+    while len(cands) < 4:
+        if d.weekday() < 5:
+            cands.append(d)
+        d -= dt.timedelta(days=1)
+    try:
+        for b in cands:
+            rows = fetch_kofia_costs(b.strftime("%Y%m%d"))
+            if len(rows) < 500:  # 미공개(0건) 또는 휴일
+                continue
+            missing = []
+            for c in k["order"]:
+                e = k["etfs"][c]
+                code = (e.get("cost") or {}).get("kofia_code")
+                if code in rows:
+                    e["cost"] = dict(basis=b.isoformat(), **rows[code], kofia_code=code)
+                else:
+                    missing.append(e["name"])
+            if missing:
+                errors.append(f"KOFIA {b} 실부담비용에서 못 찾은 종목: {', '.join(missing)} (kofia_code 확인 필요)")
+            save("kr_etf", k)
+            changed.append("kr_etf")
+            notes.append(f"국내 SCHD형 실부담비용을 KOFIA {b} 기준으로 갱신")
+            return
+    except Exception as e:  # noqa: BLE001
+        notes.append(f"KOFIA 실부담비용 조회 실패: {e}")
+
+
 # ---------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
@@ -498,6 +571,7 @@ def main():
         update_holdings(force=a.force_holdings)
     if a.only in (None, "kr_etf"):
         update_kr_etf()
+        update_real_cost()
 
     if changed:
         meta["updated"] = TODAY.isoformat()

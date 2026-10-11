@@ -301,6 +301,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
   <section class="sec">
     <div class="sec-head"><h2>국내상장 SCHD형 ETF 비교</h2><span class="cap" id="krAsOf"></span></div>
     <div class="panel scroll"><table id="krtable"></table></div>
+    <span class="cap" id="krCostCap"></span>
     <div class="panel"><div class="scroll"><table id="krq"></table></div><button type="button" class="htoggle" id="krqToggle" aria-expanded="false"></button></div>
     <span class="cap">네 종목 모두 같은 지수(Dow Jones U.S. Dividend 100)를 따라가며 매월 분배합니다. 분기 합계는 분배 기준일이 속한 분기로 묶었습니다. 작은 숫자는 작년 같은 분기 대비이며, 분배 횟수가 다르면 계산하지 않고 이유를 표시합니다.</span>
     <div class="knote">
@@ -317,13 +318,13 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
   <footer class="notes">
     <p><b>기준</b> · 2024-10-11 SCHD 3:1 주식분할 이전 배당은 ÷3 해서 지금 1주 기준으로 맞췄습니다. 연간 성장률은 4회 배당이 모두 확정된 해만 계산합니다. CAGR(연평균 복리)과 산술 평균 성장률은 서로 다른 숫자입니다.</p>
     <p><b>세금</b> · SCHD 직접투자 배당은 미국에서 15% 원천징수되며 국내 추가 원천징수는 없습니다(금융소득 연 2,000만원 초과 시 종합과세 합산). 국내상장 해외주식형 ETF 분배금은 배당소득세 15.4% 과세 대상입니다.</p>
-    <p><b>출처</b> · SCHD 배당: <a href="https://www.schwabassetmanagement.com/products/schd" target="_blank" rel="noopener">Schwab Asset Management 공식 분배 내역</a>(2016.12~), 그 이전은 dividendhistory.net 원배당 · 배당락일 종가·주가 흐름: Yahoo Finance · 지급일 환율: 하나은행 매매기준율 · 구성종목: Schwab 보유종목 전체 목록(보유 주식 수 기준일은 구성종목 표 위에 표시, 비중은 매일 그 주식 수 × Yahoo 종가로 다시 계산, 월별 기록은 2021-10부터 매월 첫 거래일) · 국내 ETF 분배: FunETF 분배 이력 · 국내 ETF 상장일: 다음금융 종목 정보 · 총보수: 금융투자협회 공시(2026-08-31) · 공식 수익률: Schwab 상품 페이지(각 수치 옆 기준일) · 분배 예정일: <a href="https://www.schwabassetmanagement.com/resource/schwab-equity-etfs-distribution-schedule-2026" target="_blank" rel="noopener">Schwab Equity ETFs Distribution Schedule 2026</a>(예정일은 바뀔 수 있음). 국내 ETF의 실부담비용(기타비용·매매중개수수료 포함)은 총보수보다 높습니다.</p>
+    <p><b>출처</b> · SCHD 배당: <a href="https://www.schwabassetmanagement.com/products/schd" target="_blank" rel="noopener">Schwab Asset Management 공식 분배 내역</a>(2016.12~), 그 이전은 dividendhistory.net 원배당 · 배당락일 종가·주가 흐름: Yahoo Finance · 지급일 환율: 하나은행 매매기준율 · 구성종목: Schwab 보유종목 전체 목록(보유 주식 수 기준일은 구성종목 표 위에 표시, 비중은 매일 그 주식 수 × Yahoo 종가로 다시 계산, 월별 기록은 2021-10부터 매월 첫 거래일) · 국내 ETF 분배: FunETF 분배 이력 · 국내 ETF 상장일: 다음금융 종목 정보 · 국내 ETF 실부담비용: 금융투자협회 전자공시 펀드별 보수비용비교(2026-08-31) · 공식 수익률: Schwab 상품 페이지(각 수치 옆 기준일) · 분배 예정일: <a href="https://www.schwabassetmanagement.com/resource/schwab-equity-etfs-distribution-schedule-2026" target="_blank" rel="noopener">Schwab Equity ETFs Distribution Schedule 2026</a>(예정일은 바뀔 수 있음). 국내 ETF 비교표의 비용은 총보수가 아니라 기타비용·매매중개수수료까지 더한 실부담비용입니다.</p>
     <p>특정 종목의 매수·매도를 권하는 자료가 아닙니다. 과거 배당이 미래 배당을 보장하지 않습니다.</p>
   </footer>
 </div>
 
 <script>
-let LISTED={},SCHD,KR,HOLD,HOLD_ASOF,HOLD_META,HM,AS_OF_KR,WHT,FEES,NAMES,TIMING,ORDER,META,PRICES;
+let COST={},COST_SRC='',LISTED={},SCHD,KR,HOLD,HOLD_ASOF,HOLD_META,HM,AS_OF_KR,WHT,FEES,NAMES,TIMING,ORDER,META,PRICES;
 async function boot(){
   try{
     const get=n=>fetch('data/'+n+'.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error(n+' '+r.status);return r.json();});
@@ -334,7 +335,7 @@ async function boot(){
     const factor=ex=>m.splits.filter(s=>ex<s.date).reduce((f,s)=>f*s.ratio,1);
     SCHD=d.map(x=>[x.ex,x.pay,x.amount,factor(x.ex),x.close,x.fx,x.source,x.added]);
     ORDER=k.order; KR={}; FEES={}; NAMES={}; TIMING={};
-    ORDER.forEach(c=>{const e=k.etfs[c]; KR[c]=e.history; LISTED[c]=(e.listed||'').replace(/-/g,''); FEES[c]=e.fee; NAMES[c]=e.name; TIMING[c]=e.timing;});
+    COST_SRC=k.cost_source||''; ORDER.forEach(c=>{const e=k.etfs[c]; COST[c]=e.cost||null; KR[c]=e.history; LISTED[c]=(e.listed||'').replace(/-/g,''); FEES[c]=e.fee; NAMES[c]=e.name; TIMING[c]=e.timing;});
     const lastKR=ORDER.map(c=>KR[c][KR[c].length-1][0]).sort().pop();
     const me=new Date(+lastKR.slice(0,4),+lastKR.slice(4,6),0);
     AS_OF_KR=`${me.getFullYear()}-${String(me.getMonth()+1).padStart(2,'0')}-${String(me.getDate()).padStart(2,'0')}`;
@@ -747,12 +748,14 @@ const sectorRows=rows=>{const mx=Math.max(...rows.map(r=>r[1]));
   const asof=new Date(AS_OF_KR), from=new Date(asof); from.setFullYear(from.getFullYear()-1);
   const d=s=>new Date(s.slice(0,4)+'-'+s.slice(4,6)+'-'+s.slice(6,8));
   $('krAsOf').textContent=`${AS_OF_KR} 기준 최근 12개월`;
-  let h=`<thead><tr><th>종목</th><th>총보수</th><th>분배 시점</th><th>최근 분배금</th><th>12개월 분배금</th><th>12개월 분배율</th></tr></thead><tbody>`;
+  let h=`<thead><tr><th>종목</th><th>실부담비용</th><th>분배 시점</th><th>최근 분배금</th><th>12개월 분배금</th><th>12개월 분배율</th></tr></thead><tbody>`;
   ORDER.forEach(c=>{const xs=KR[c].filter(x=>d(x[0])>from&&d(x[0])<=asof); const last=xs[xs.length-1];
-    h+=`<tr><td>${NAMES[c]} <span class="cap num">${c}</span>${LISTED[c]?`<span class="d flat">${LISTED[c].slice(0,4)}-${LISTED[c].slice(4,6)}-${LISTED[c].slice(6)} 상장</span>`:''}</td><td class="num">${(FEES[c]*100).toFixed(4)}%</td><td>${TIMING[c]}</td><td class="num">${won(last[1])}<span class="d flat">${last[0].slice(0,4)}-${last[0].slice(4,6)}-${last[0].slice(6)}</span></td><td class="num">${won(xs.reduce((s,x)=>s+x[1],0))}<span class="d flat">${xs.length}회</span></td><td class="num">${xs.reduce((s,x)=>s+x[2],0).toFixed(2)}%</td></tr>`;});
+    h+=`<tr><td>${NAMES[c]} <span class="cap num">${c}</span>${LISTED[c]?`<span class="d flat">${LISTED[c].slice(0,4)}-${LISTED[c].slice(4,6)}-${LISTED[c].slice(6)} 상장</span>`:''}</td><td class="num">${(x=>x?`<span title="총보수 ${x.total_fee.toFixed(4)}% + 기타비용 ${x.other.toFixed(2)}% + 매매·중개수수료 ${x.trading.toFixed(4)}%${x.sales?` + 판매수수료 ${x.sales.toFixed(4)}%`:''} (KOFIA ${x.basis})">${x.real.toFixed(4)}%</span><span class="d flat">총보수 ${x.total_fee.toFixed(4)}%</span>`:`${(FEES[c]*100).toFixed(4)}%<span class="d flat">총보수</span>`)(COST[c])}</td><td>${TIMING[c]}</td><td class="num">${won(last[1])}<span class="d flat">${last[0].slice(0,4)}-${last[0].slice(4,6)}-${last[0].slice(6)}</span></td><td class="num">${won(xs.reduce((s,x)=>s+x[1],0))}<span class="d flat">${xs.length}회</span></td><td class="num">${xs.reduce((s,x)=>s+x[2],0).toFixed(2)}%</td></tr>`;});
   const sl=R.filter(r=>new Date(r.ex)<=asof).pop();
-  h+=`<tr class="ref"><td>SCHD <span class="cap">미국 직투 · 참고</span></td><td class="num">0.06%</td><td>분기</td><td class="num">${usd(sl.adj)}<span class="d flat">${sl.ex}</span></td><td class="num">${usd(sl.ttm)}<span class="d flat">4회</span></td><td class="num">${(sl.yld*100).toFixed(2)}%</td></tr></tbody>`;
+  h+=`<tr class="ref"><td>SCHD <span class="cap">미국 직투 · 참고</span></td><td class="num">0.06%<span class="d flat">운용보수 · 매매비용 별도</span></td><td>분기</td><td class="num">${usd(sl.adj)}<span class="d flat">${sl.ex}</span></td><td class="num">${usd(sl.ttm)}<span class="d flat">4회</span></td><td class="num">${(sl.yld*100).toFixed(2)}%</td></tr></tbody>`;
   $('krtable').innerHTML=h;
+  const cb=ORDER.map(c=>COST[c]&&COST[c].basis).filter(Boolean).sort().pop();
+  $('krCostCap').textContent=cb?`실부담비용 = 총보수 + 기타비용 + 매매·중개수수료(+판매수수료), 금융투자협회 공시 ${cb} 기준 (월 1회 공시, 약 한 달 늦게 공개). 숫자에 마우스를 올리면 항목별 금액이 보입니다. SCHD 0.06%는 운용보수만이라 국내 ETF 실부담비용과 기준이 다릅니다.`:'';
   // 분기 합계: 평소엔 최근 8개 분기, 펼치면 가장 먼저 분배한 종목의 첫 분기부터 전부
   const first=ORDER.flatMap(c=>[KR[c][0][0],LISTED[c]]).filter(Boolean).sort()[0], fy=+first.slice(0,4), fq=Math.ceil(+first.slice(4,6)/3);
   const all=[];{let y=asof.getFullYear(),q=Math.ceil((asof.getMonth()+1)/3);
