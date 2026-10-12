@@ -823,5 +823,10 @@
    "shares": 3570.0,
    "officialWeight": 0.0
   }
- ]
+ ],
+ "top": {
+  "asOf": "2026-10-09",
+  "source": "stockanalysis 상위 25종목",
+  "checked": "2026-10-12"
+ }
 }
