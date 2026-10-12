@@ -211,13 +211,13 @@
    ],
    "listed": "2023-06-20",
    "cost": {
-    "basis": "2026-08-31",
+    "basis": "2026-09-30",
     "total_fee": 0.01,
     "other": 0.05,
     "ter": 0.06,
-    "trading": 0.0434,
+    "trading": 0.0464,
     "sales": 0.0,
-    "real": 0.1034,
+    "real": 0.1064,
     "kofia_code": "K55301E27634"
    }
   },
@@ -460,13 +460,13 @@
    ],
    "listed": "2022-11-15",
    "cost": {
-    "basis": "2026-08-31",
+    "basis": "2026-09-30",
     "total_fee": 0.01,
     "other": 0.06,
     "ter": 0.07,
-    "trading": 0.0998,
+    "trading": 0.1011,
     "sales": 0.0,
-    "real": 0.1698,
+    "real": 0.1711,
     "kofia_code": "K55210DY2868"
    }
   },
@@ -699,13 +699,13 @@
    ],
    "listed": "2021-10-21",
    "cost": {
-    "basis": "2026-08-31",
+    "basis": "2026-09-30",
     "total_fee": 0.01,
     "other": 0.06,
     "ter": 0.07,
-    "trading": 0.0781,
+    "trading": 0.0824,
     "sales": 0.0,
-    "real": 0.1481,
+    "real": 0.1524,
     "kofia_code": "K55101DN4471"
    }
   },
@@ -843,13 +843,13 @@
    ],
    "listed": "2024-08-13",
    "cost": {
-    "basis": "2026-08-31",
+    "basis": "2026-09-30",
     "total_fee": 0.0099,
-    "other": 0.08,
-    "ter": 0.09,
-    "trading": 0.0934,
+    "other": 0.07,
+    "ter": 0.08,
+    "trading": 0.0959,
     "sales": 0.0,
-    "real": 0.1834,
+    "real": 0.1759,
     "kofia_code": "K55105EC8025"
    }
   }
