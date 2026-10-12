@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>SCHD 배당 트래커</title>
+<title>SCHD 배당 트래커 · 똑재TV</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -31,6 +31,7 @@ p,.cap,.s,.hint,.sub,.en,dd,dt,li{text-wrap:pretty}
 .stat .s .ln{display:block;text-wrap:balance}
 .hint b{white-space:nowrap}
 .wrap{max-width:1040px;margin:0 auto;padding-inline:16px;padding-block:28px 56px;display:flex;flex-direction:column;gap:28px}
+.hub-back{align-self:flex-start;margin-bottom:-18px;font-size:13px;color:var(--muted);text-decoration:none}.hub-back:hover{color:var(--accent)}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:14px}
 h1{font-size:30px;line-height:1.15;margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
 h1 small{display:block;font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.02em;margin-bottom:6px}
@@ -196,6 +197,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 </head>
 <body>
 <div class="wrap">
+  <a href="https://ttokjaetv.github.io/" class="hub-back">← 똑재TV 계산기 모음</a>
   <header>
     <h1><small>Schwab U.S. Dividend Equity ETF</small>SCHD 배당 트래커</h1>
     <div class="stamp">반영 범위 <b id="rangeTxt"></b><br>갱신 <b id="updTxt"></b><br><a href="downloads/schd_dividend_tracker.xlsx" style="color:var(--accent)">엑셀 내려받기</a></div>
@@ -305,6 +307,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
     <div class="panel scroll"><table id="krtable"></table></div>
     <span class="cap" id="krCostCap"></span>
     <div class="panel"><div class="scroll"><table id="krq"></table></div><button type="button" class="htoggle" id="krqToggle" aria-expanded="false"></button></div>
+    <span class="cap">12개월 분배율 = 최근 12개월 분배금 합 ÷ 최근 분배 때 1좌 가격(작은 숫자 · FunETF 회차 분배율로 역산). SCHD 행은 최근 4회 배당 합 ÷ 최근 배당락일 종가입니다.</span>
     <span class="cap">네 종목 모두 같은 지수(Dow Jones U.S. Dividend 100)를 따라가며 매월 분배합니다. 분기 합계는 분배 기준일이 속한 분기로 묶었습니다. 작은 숫자는 작년 같은 분기 대비이며, 분배 횟수가 다르면 계산하지 않고 이유를 표시합니다.</span>
     <div class="knote">
       <p class="kh">ACE 미국배당다우존스는 왜 '비교 불가'가 많나요?</p>
@@ -322,6 +325,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
     <p><b>세금</b> · SCHD 직접투자 배당은 미국에서 15% 원천징수되며 국내 추가 원천징수는 없습니다(금융소득 연 2,000만원 초과 시 종합과세 합산). 국내상장 해외주식형 ETF 분배금은 배당소득세 15.4% 과세 대상입니다.</p>
     <p><b>출처</b> · SCHD 배당: <a href="https://www.schwabassetmanagement.com/products/schd" target="_blank" rel="noopener">Schwab Asset Management 공식 분배 내역</a>(2016.12~), 그 이전은 dividendhistory.net 원배당 · 배당락일 종가·주가 흐름: Yahoo Finance · 지급일 환율: 하나은행 매매기준율 · 구성종목: Schwab 보유종목 전체 목록(보유 주식 수 기준일은 구성종목 표 위에 표시, 비중은 매일 그 주식 수 × Yahoo 종가로 다시 계산, 월별 기록은 2021-10부터 매월 첫 거래일) · 국내 ETF 분배: FunETF 분배 이력 · 국내 ETF 상장일: 다음금융 종목 정보 · 국내 ETF 실부담비용: 금융투자협회 전자공시 펀드별 보수비용비교(2026-08-31) · 공식 수익률: Schwab 상품 페이지(각 수치 옆 기준일) · 분배 예정일: <a href="https://www.schwabassetmanagement.com/resource/schwab-equity-etfs-distribution-schedule-2026" target="_blank" rel="noopener">Schwab Equity ETFs Distribution Schedule 2026</a>(예정일은 바뀔 수 있음). 국내 ETF 비교표의 비용은 총보수가 아니라 기타비용·매매중개수수료까지 더한 실부담비용입니다.</p>
     <p>특정 종목의 매수·매도를 권하는 자료가 아닙니다. 과거 배당이 미래 배당을 보장하지 않습니다.</p>
+    <p><a href="https://www.youtube.com/@ttok_jae" target="_blank" rel="noopener">똑재TV 구독하기</a> · <a href="https://cafe.naver.com/ttokjae" target="_blank" rel="noopener">평생 ETF 투자 카페</a></p>
   </footer>
 </div>
 
@@ -378,7 +382,7 @@ $('latestAmt').innerHTML=`${usd(L.adj)}<span>1주당</span>`;
 $('latestChips').innerHTML=`<span class="chip ${cls(L.yoy)}">전년 동기 ${pct(L.yoy)}</span><span class="chip ${cls(L.qoq)}">전분기 ${pct(L.qoq)}</span><span class="chip">작년 ${L.q}분기 ${usd(R[R.length-5].adj)}</span>`;
 $('latestKv').innerHTML=[
  ['배당락일',L.ex],['지급일',L.pay],['배당락일 종가',L.close?usd(L.close,2):'-'],
- ['TTM 배당 (최근 4회)',usd(L.ttm)],['TTM 수익률 (배당락일 종가)',L.yld?(L.yld*100).toFixed(2)+'%':'-'],['지급일 환율',L.fx?won1(L.fx):'지급 예정'],
+ ['TTM 배당 (최근 4회)',usd(L.ttm)],['12개월 분배율 (배당락일 종가)',L.yld?(L.yld*100).toFixed(2)+'%':'-'],['지급일 환율',L.fx?won1(L.fx):'지급 예정'],
  ['1주 원화 세전',L.krw?won1(L.krw):'지급 후 표시'],['1주 원화 세후',L.krw?won1(L.krw*(1-WHT)):'지급 후 표시'],['100주 세후',L.krw?won(L.krw*(1-WHT)*100):'지급 후 표시']
 ].map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
 // 다음 배당: 금액이 발표되기 전에는 Schwab 분배 일정의 날짜만 '예정'으로 보여 준다
@@ -394,7 +398,7 @@ if(O){const yv=x=>(x.value*100).toFixed(2)+'%';
   $('offi').innerHTML=`<p class="oh">SCHWAB 공식 수익률</p><dl>
    <div><dt>30일 SEC 수익률</dt><dd>${yv(O.sec_yield)}<small>${O.sec_yield.asOf} 기준</small></dd></div>
    <div><dt>분배수익률 (TTM)</dt><dd>${yv(O.dist_yield_ttm)}<small>${O.dist_yield_ttm.asOf} 기준</small></dd></div></dl>
-   <p class="cap">위의 'TTM 수익률(배당락일 종가)'까지 세 숫자는 계산 방식과 기준일이 달라 서로 다릅니다. 30일 SEC 수익률은 최근 30일 순투자수익(보수 차감)을 1년으로 환산한 표준 공시 수치, 분배수익률(TTM)은 최근 12개월 분배금 합계를 기준일 NAV로 나눈 값입니다.</p>`;
+   <p class="cap">위의 '12개월 분배율(배당락일 종가)'까지 세 숫자는 계산 방식과 기준일이 달라 서로 다릅니다. 30일 SEC 수익률은 최근 30일 순투자수익(보수 차감)을 1년으로 환산한 표준 공시 수치, 분배수익률(TTM)은 최근 12개월 분배금 합계를 기준일 NAV로 나눈 값입니다.</p>`;
   $('offi').hidden=false;}
 $('latestSrc').textContent=`금액 출처: ${L.src}${L.added?` · 트래커 반영 ${L.added}`:''}. 원화 금액은 지급일 하나은행 매매기준율로 환산한 참고값이며, 실제 세후 입금액은 환전 시점·증권사 수수료에 따라 다르니 증권사 거래내역으로 확인하세요.`;
 // ---- 요약 타일 8칸 (숫자 + 작은 그래프/해석 한 줄)
@@ -766,7 +770,7 @@ const sectorRows=rows=>{const mx=Math.max(...rows.map(r=>r[1]));
   $('krAsOf').textContent=`${AS_OF_KR} 기준 최근 12개월`;
   let h=`<thead><tr><th>종목</th><th>실부담비용</th><th>분배 시점</th><th>최근 분배금</th><th>12개월 분배금</th><th>12개월 분배율</th></tr></thead><tbody>`;
   ORDER.forEach(c=>{const xs=KR[c].filter(x=>d(x[0])>from&&d(x[0])<=asof); const last=xs[xs.length-1];
-    h+=`<tr><td>${NAMES[c]} <span class="cap num">${c}</span>${LISTED[c]?`<span class="d flat">${LISTED[c].slice(0,4)}-${LISTED[c].slice(4,6)}-${LISTED[c].slice(6)} 상장</span>`:''}</td><td class="num">${(x=>x?`<span title="총보수 ${x.total_fee.toFixed(4)}% + 기타비용 ${x.other.toFixed(2)}% + 매매·중개수수료 ${x.trading.toFixed(4)}%${x.sales?` + 판매수수료 ${x.sales.toFixed(4)}%`:''} (KOFIA ${x.basis})">${x.real.toFixed(4)}%</span><span class="d flat">총보수 ${x.total_fee.toFixed(4)}%</span>`:`${(FEES[c]*100).toFixed(4)}%<span class="d flat">총보수</span>`)(COST[c])}</td><td>${TIMING[c]}</td><td class="num">${won(last[1])}<span class="d flat">${last[0].slice(0,4)}-${last[0].slice(4,6)}-${last[0].slice(6)}</span></td><td class="num">${won(xs.reduce((s,x)=>s+x[1],0))}<span class="d flat">${xs.length}회</span></td><td class="num">${xs.reduce((s,x)=>s+x[2],0).toFixed(2)}%</td></tr>`;});
+    h+=`<tr><td>${NAMES[c]} <span class="cap num">${c}</span>${LISTED[c]?`<span class="d flat">${LISTED[c].slice(0,4)}-${LISTED[c].slice(4,6)}-${LISTED[c].slice(6)} 상장</span>`:''}</td><td class="num">${(x=>x?`<span title="총보수 ${x.total_fee.toFixed(4)}% + 기타비용 ${x.other.toFixed(2)}% + 매매·중개수수료 ${x.trading.toFixed(4)}%${x.sales?` + 판매수수료 ${x.sales.toFixed(4)}%`:''} (KOFIA ${x.basis})">${x.real.toFixed(4)}%</span><span class="d flat">총보수 ${x.total_fee.toFixed(4)}%</span>`:`${(FEES[c]*100).toFixed(4)}%<span class="d flat">총보수</span>`)(COST[c])}</td><td>${TIMING[c]}</td><td class="num">${won(last[1])}<span class="d flat">${last[0].slice(0,4)}-${last[0].slice(4,6)}-${last[0].slice(6)}</span></td><td class="num">${won(xs.reduce((s,x)=>s+x[1],0))}<span class="d flat">${xs.length}회</span></td><td class="num">${(()=>{const sum=xs.reduce((s,x)=>s+x[1],0), px=last&&last[2]>0?last[1]/(last[2]/100):null; return px?`${(sum/px*100).toFixed(2)}%<span class="d flat">÷ ${won(px)}</span>`:'-';})()}</td></tr>`;});
   const sl=R.filter(r=>new Date(r.ex)<=asof).pop();
   h+=`<tr class="ref"><td>SCHD <span class="cap">미국 직투 · 참고</span></td><td class="num">0.06%<span class="d flat">총보수만 · 펀드 내부 매매비용 미포함</span></td><td>분기</td><td class="num">${usd(sl.adj)}<span class="d flat">${sl.ex}</span></td><td class="num">${usd(sl.ttm)}<span class="d flat">4회</span></td><td class="num">${(sl.yld*100).toFixed(2)}%</td></tr></tbody>`;
   $('krtable').innerHTML=h;
