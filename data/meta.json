@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-14",
+ "updated": "2026-10-15",
  "splits": [
   {
    "date": "2024-10-11",
@@ -52,14 +52,14 @@
  "official": {
   "source": "Schwab Asset Management SCHD 상품 페이지 (Yields)",
   "url": "https://www.schwabassetmanagement.com/products/schd",
-  "checked": "2026-10-09",
+  "checked": "2026-10-15",
   "sec_yield": {
-   "value": 0.0337,
-   "asOf": "2026-10-07"
+   "value": 0.033,
+   "asOf": "2026-10-13"
   },
   "dist_yield_ttm": {
-   "value": 0.03,
-   "asOf": "2026-08-31"
+   "value": 0.0324,
+   "asOf": "2026-09-30"
   }
  },
  "schedule": {
