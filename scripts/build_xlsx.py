@@ -101,7 +101,7 @@ notes=[
  '· \'평균 성장률(산술)\'과 \'CAGR(연평균 복리)\'은 다른 숫자입니다. 글에 쓸 때 용어를 구분하세요.',
  '· 진행 중인 해의 남은 분기 \'예상\' 값은 그해 확정 분기의 단순 평균입니다. 과거 14년 중 13년은 4분기가 1~3분기 평균보다 높았으니(보통 +8~16%) 연간 예상치는 보수적(낮게) 나올 가능성이 큽니다.',
  '· 이 파일은 GitHub에서 새 배당이 반영될 때마다 다시 만들어집니다(차트 범위도 자동). 손으로 고친 내용은 다음 생성 때 덮어써지니, 고칠 값은 data 폴더 JSON에서 고치세요.',
- '· 국내 SCHD형 ETF 분배율은 매월 기준일 가격 대비 분배율을 12개월 합산한 값입니다(근사치).',
+ '· 국내 SCHD형 ETF의 12개월 분배율 = 12개월 분배금 합계 ÷ 기준 가격(최근 분배 시점 1좌 가격 = 최근 분배금 ÷ 회차 분배율로 역산). SCHD 행은 최근 4회 배당 합 ÷ 배당락일 종가. 화면과 같은 계산입니다.',
 ]
 for n in notes:
     c=G.cell(r,2,n); c.font=f_n; G.merge_cells(start_row=r,start_column=2,end_row=r,end_column=3); r+=1
@@ -301,7 +301,9 @@ V['A3']='비교 기준일'; V['A3'].font=f_b
 V['B3']=KR_ASOF; V['B3'].font=f_in; V['B3'].fill=key_fill; V['B3'].number_format=DATE
 V['C3']='← 분기마다 분기 말일로 바꾸세요. 아래 표가 이 날짜 기준 최근 12개월로 다시 계산됩니다.'; V['C3'].font=f_s
 hrow=5
-header(V,hrow,['종목','코드','실부담비용\n(연)','분배\n시점','최근 분배일','최근 분배금','12개월\n분배 횟수','12개월\n분배금 합계','12개월\n분배율 합계'],[24,9,9,10,12,11,9,12,11])
+header(V,hrow,['종목','코드','실부담비용\n(연)','분배\n시점','최근 분배일','최근 분배금','12개월\n분배 횟수','12개월\n분배금 합계','기준 가격\n(1좌)','12개월\n분배율'],[24,9,9,10,12,11,9,12,11,11])
+V.cell(hrow,9).comment=Comment('기준 가격 = 최근 분배 시점 1좌 가격. 국내 ETF는 최근 분배금 ÷ 그 회차 분배율([국내SCHD형_분배] E열)로 역산, SCHD는 배당락일 종가.','tracker')
+V.cell(hrow,10).comment=Comment('12개월 분배율 = 12개월 분배금 합계 ÷ 기준 가격. 회차별 분배율을 더한 값이 아닙니다. 화면(index.html)과 같은 계산.','tracker')
 V.row_dimensions[hrow].height=34
 for j,code in enumerate(order):
     rr=hrow+1+j
@@ -314,8 +316,9 @@ for j,code in enumerate(order):
     V.cell(rr,6,f'=SUMIFS({KR("D")},{KR("A")},$B{rr},{KR("C")},E{rr})').number_format=KRW0
     V.cell(rr,7,f'=COUNTIFS({KR("A")},$B{rr},{KR("C")},">"&EDATE($B$3,-12),{KR("C")},"<="&$B$3)')
     V.cell(rr,8,f'=SUMIFS({KR("D")},{KR("A")},$B{rr},{KR("C")},">"&EDATE($B$3,-12),{KR("C")},"<="&$B$3)').number_format=KRW0
-    V.cell(rr,9,f'=SUMIFS({KR("E")},{KR("A")},$B{rr},{KR("C")},">"&EDATE($B$3,-12),{KR("C")},"<="&$B$3)').number_format=PCT
-    for col in range(1,10):
+    V.cell(rr,9,f'=IFERROR(F{rr}/SUMIFS({KR("E")},{KR("A")},$B{rr},{KR("C")},E{rr}),"")').number_format=KRW0
+    V.cell(rr,10,f'=IFERROR(H{rr}/I{rr},"")').number_format=PCT
+    for col in range(1,11):
         V.cell(rr,col).border=bd
         if col>=5: V.cell(rr,col).font=f_fx
 sr=hrow+5
@@ -327,15 +330,17 @@ V.cell(sr,5,f'=_xlfn.MAXIFS({RNG("C")},{RNG("C")},"<="&$B$3)').number_format=DAT
 V.cell(sr,6,f'=INDEX({RNG("G")},MATCH(E{sr},{RNG("C")},0))').number_format=USD4
 V.cell(sr,7,f'=COUNTIFS({RNG("C")},">"&EDATE($B$3,-12),{RNG("C")},"<="&$B$3)')
 V.cell(sr,8,f'=INDEX({RNG("J")},MATCH(E{sr},{RNG("C")},0))').number_format=USD4
-V.cell(sr,9,f'=INDEX({RNG("L")},MATCH(E{sr},{RNG("C")},0))').number_format=PCT
-for col in range(1,10): V.cell(sr,col).border=bd
-V.cell(sr+1,1,'※ SCHD 행: 금액은 USD, 수익률은 최근 4회 배당 ÷ 배당락일 종가. 0.06%는 Schwab 공시 총보수(펀드 내부 매매비용 미포함)라 국내 ETF 실부담비용과 기준이 다릅니다. 투자자가 내는 증권사 수수료·환전 비용은 양쪽 모두 제외.').font=f_s
+V.cell(sr,9,f'=INDEX({RNG("K")},MATCH(E{sr},{RNG("C")},0))').number_format='$0.00'
+V.cell(sr,10,f'=IFERROR(H{sr}/I{sr},"")').number_format=PCT
+for col in range(1,11): V.cell(sr,col).border=bd
+V.cell(sr+1,1,'※ SCHD 행: 금액은 USD, 12개월 분배율은 기준일 이전 마지막 배당락까지 4회 배당 합 ÷ 그 배당락일 종가(기준일 이후 분배가 빠져 [SCHD_배당] 최신 분배 기준 TTM과 다를 수 있음). 0.06%는 Schwab 공시 총보수(펀드 내부 매매비용 미포함)라 국내 ETF 실부담비용과 기준이 다릅니다. 투자자가 내는 증권사 수수료·환전 비용은 양쪽 모두 제외.').font=f_s
 _cb=max((v['basis'] for v in cost.values() if v),default='')
 V.cell(sr+2,1,f"※ 국내 ETF 실부담비용 = 총보수 + 기타비용 + 매매·중개수수료(+판매수수료), 금융투자협회 공시 {_cb} 기준. 셀 메모에 항목별 금액.").font=f_s
 V.cell(sr+3,1,'※ 국내상장 해외주식형 ETF 분배금은 배당소득세 15.4% 과세 (연금저축·IRP·ISA에서는 과세이연/비과세 혜택).').font=f_s
+V.cell(sr+4,1,'※ 12개월 분배율 = 12개월 분배금 합계 ÷ 기준 가격. 기준 가격은 국내 ETF는 최근 분배 시점 1좌 가격(최근 분배금 ÷ 회차 분배율로 역산), SCHD는 배당락일 종가입니다. 회차별 분배율을 더한 값이 아닙니다.').font=f_s
 
 # quarterly table
-qr=sr+6
+qr=sr+7
 V.cell(qr-1,1,'분기별 분배금 합계 (기준일 기준 분기 귀속)').font=f_b
 header_cells=['분기','시작일','종료일']+[names[c].split()[0] for c in order]+['SCHD\n(USD)','SCHD 원화\n(세전)']
 for i,t in enumerate(header_cells,1):
