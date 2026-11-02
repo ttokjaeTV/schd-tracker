@@ -13,12 +13,14 @@ GitHub Actions가 매일 새 데이터를 확인해 자동으로 갱신합니다
 | `data/holdings_monthly.json` | 매월 첫 거래일 비중 기록 (2021-10부터, 한 달 = 한 줄) |
 | `data/kr_etf.json` | 국내 SCHD형 ETF 4종 분배 이력, 총보수 |
 | `data/prices.json` | SCHD 일별 종가·배당 재투자 수정주가 (2011-10 상장 이후 전체) |
+| `data/tr_compare.json` | 배당 재투자 총수익(TR) 비교 차트용: JEPI·JEPQ·QQQ·SCHD·SPY 일별 지수 (JEPQ 첫 거래일 2022-05-04 = 100). SCHD·JEPQ·JEPI 트래커 세 곳이 같은 파일 |
 | `data/meta.json` | 갱신일, 주식분할 이력, 한글 종목명·섹터명, 원천징수율 |
 | `downloads/schd_dividend_tracker.xlsx` | 엑셀 마스터 (데이터가 바뀔 때마다 자동 생성) |
 | `scripts/update.py` | 데이터 수집·검증 |
 | `scripts/holdings_lib.py` | 구성종목 공통 처리 (Schwab CSV 해석·월별 기록, 표준 라이브러리만 사용) |
 | `scripts/import_holdings.py` | (수동용) 직접 받은 Schwab 보유종목 파일로 보유 주식 수 교체 |
 | `scripts/build_xlsx.py` | 엑셀 생성 |
+| `scripts/tr_compare.py` | TR 비교 수집·요약 계산 (세 트래커 같은 파일, 직접 실행하면 계산 점검) |
 | `.github/workflows/update.yml` | 매일 한국시간 08:30 자동 실행 |
 
 ## 자동 갱신 규칙
@@ -26,6 +28,7 @@ GitHub Actions가 매일 새 데이터를 확인해 자동으로 갱신합니다
 - **SCHD 배당**: Schwab 공식 분배 CSV → 막히면 stockanalysis(예비, 2026-10 첫 실행 기준 GitHub 서버에서는 Schwab이 막혀 예비 출처로 동작). 새 배당이 직전 대비 ±40% 넘게 다르면 반영하지 않고 이슈로 알림
 - **배당락일 종가**: Yahoo Finance (분할 반영, 배당 미조정 종가)
 - **주가 흐름**: Yahoo Finance 전체 이력을 7일마다(새 배당 반영 시엔 즉시) 통째로 다시 받음
+- **TR 비교 차트**: Yahoo Finance 수정주가(Adj Close, 배당 재투자 반영) 5종을 7일마다 받아 `data/tr_compare.json`에 반영. 이미 있는 날짜는 그대로 두고 새 날짜만 덧붙임(Yahoo 소수점이 받을 때마다 조금씩 달라 과거 값이 흔들리지 않게). 못 받으면 기존 값 유지, 마지막 날짜가 14일 이상 오래되면 `확인 필요` 이슈. 화면의 1년·3년·전체 버튼은 그 구간 첫날을 0%로 다시 맞춘 누적 수익률이고, 엑셀 `TR비교` 시트의 수식 값과 같음. 배당 재투자 가정, 세금·환율 미반영
 - **지급일 환율**: 하나은행 매매기준율(다음금융). 지급일이 지나야 채워짐
 - **Schwab 접속**: Schwab(Akamai)은 일반 파이썬 요청을 403으로 막고 브라우저 접속은 통과시킴 → `curl_cffi`로 크롬처럼 접속(배당 CSV·보유종목 CSV·공식 수익률 모두 적용)
 - **구성종목**: 매일 Schwab 공식 보유종목 CSV(SCHD_FundHoldings_날짜.CSV)를 받아 그대로 반영. 못 받은 날은 '마지막 공식 보유 주식 수 × Yahoo 최근 종가'로 비중을 다시 계산하고(주식분할은 Yahoo 분할 정보로 보정), stockanalysis 무료 상위 25종목 주식 수(Schwab 데이터와 같음)로 리밸런싱을 감지해 상위 종목 주식 수를 바꿈. 2026-09-01 주식 수에서 시작해 이 방식으로 10/8을 계산하면 공시 비중과 최대 0.07%p 차이. 공식 파일을 30일 넘게 못 받으면 `확인 필요` 이슈
