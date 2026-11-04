@@ -1,818 +1,818 @@
 {
- "asOf": "2026-11-02",
+ "asOf": "2026-11-03",
  "basis": "computed",
  "source": "Schwab Asset Management SCHD_FundHoldings CSV",
  "official": {
-  "asOf": "2026-10-31",
+  "asOf": "2026-11-02",
   "source": "Schwab Asset Management SCHD_FundHoldings CSV"
  },
  "items": [
   {
    "symbol": "TXN",
-   "weight": 4.59763,
+   "weight": 4.804636,
    "name": "TEXAS INSTRUMENT",
    "sector": "Information Technology",
-   "shares": 18441936.0,
-   "officialWeight": 4.591237
+   "shares": 18475054.0,
+   "officialWeight": 4.600485
   },
   {
    "symbol": "PG",
-   "weight": 4.297117,
+   "weight": 4.300269,
    "name": "PROCTER & GAMBLE",
    "sector": "Consumer Staples",
-   "shares": 31827925.0,
-   "officialWeight": 4.25556
+   "shares": 31884616.0,
+   "officialWeight": 4.299723
   },
   {
    "symbol": "KO",
-   "weight": 4.212477,
+   "weight": 4.208882,
    "name": "COCA-COLA",
    "sector": "Consumer Staples",
-   "shares": 53253027.0,
-   "officialWeight": 4.145999
+   "shares": 53348192.0,
+   "officialWeight": 4.215056
   },
   {
    "symbol": "CVX",
-   "weight": 4.171618,
+   "weight": 4.167179,
    "name": "CHEVRON",
    "sector": "Energy",
-   "shares": 22187899.0,
-   "officialWeight": 4.324457
-  },
-  {
-   "symbol": "HD",
-   "weight": 4.15435,
-   "name": "HOME DEPOT",
-   "sector": "Consumer Discretionary",
-   "shares": 14752510.0,
-   "officialWeight": 4.018957
+   "shares": 22227985.0,
+   "officialWeight": 4.174253
   },
   {
    "symbol": "COP",
-   "weight": 4.146072,
+   "weight": 4.117947,
    "name": "CONOCOPHILLIPS",
    "sector": "Energy",
-   "shares": 34205874.0,
-   "officialWeight": 4.360072
+   "shares": 34266907.0,
+   "officialWeight": 4.148599
+  },
+  {
+   "symbol": "HD",
+   "weight": 4.103974,
+   "name": "HOME DEPOT",
+   "sector": "Consumer Discretionary",
+   "shares": 14779570.0,
+   "officialWeight": 4.157089
   },
   {
    "symbol": "AMGN",
-   "weight": 4.076655,
+   "weight": 4.080585,
    "name": "AMGEN INC",
    "sector": "Health Care",
-   "shares": 10610581.0,
-   "officialWeight": 4.091872
+   "shares": 10630116.0,
+   "officialWeight": 4.079371
   },
   {
    "symbol": "UNH",
-   "weight": 3.886241,
+   "weight": 3.964487,
    "name": "UNITEDHEALTH GROUP",
    "sector": "Health Care",
-   "shares": 11757108.0,
-   "officialWeight": 3.959593
-  },
-  {
-   "symbol": "PEP",
-   "weight": 3.876019,
-   "name": "PEPSICO",
-   "sector": "Consumer Staples",
-   "shares": 33439915.0,
-   "officialWeight": 3.80058
+   "shares": 11778615.0,
+   "officialWeight": 3.888784
   },
   {
    "symbol": "ABT",
-   "weight": 3.867966,
+   "weight": 3.879688,
    "name": "ABBOTT LABORATORIES",
    "sector": "Health Care",
-   "shares": 42537004.0,
-   "officialWeight": 3.738342
+   "shares": 42612876.0,
+   "officialWeight": 3.870321
   },
   {
-   "symbol": "MRK",
-   "weight": 3.794899,
-   "name": "MERCK & CO INC",
-   "sector": "Health Care",
-   "shares": 30987862.0,
-   "officialWeight": 3.834233
-  },
-  {
-   "symbol": "ACN",
-   "weight": 3.75296,
-   "name": "ACCENTURE PLC CLASS A",
-   "sector": "Information Technology",
-   "shares": 17423743.0,
-   "officialWeight": 3.723511
+   "symbol": "PEP",
+   "weight": 3.827024,
+   "name": "PEPSICO",
+   "sector": "Consumer Staples",
+   "shares": 33500165.0,
+   "officialWeight": 3.878449
   },
   {
    "symbol": "QCOM",
-   "weight": 3.698996,
+   "weight": 3.790165,
    "name": "QUALCOMM",
    "sector": "Information Technology",
-   "shares": 27647932.0,
-   "officialWeight": 3.770345
+   "shares": 27697366.0,
+   "officialWeight": 3.701264
+  },
+  {
+   "symbol": "MRK",
+   "weight": 3.737562,
+   "name": "MERCK & CO INC",
+   "sector": "Health Care",
+   "shares": 31043547.0,
+   "officialWeight": 3.79726
+  },
+  {
+   "symbol": "ACN",
+   "weight": 3.697848,
+   "name": "ACCENTURE PLC CLASS A",
+   "sector": "Information Technology",
+   "shares": 17455015.0,
+   "officialWeight": 3.755286
   },
   {
    "symbol": "VZ",
-   "weight": 3.479556,
+   "weight": 3.529148,
    "name": "VERIZON COMMUNICATIONS INC",
    "sector": "Communication Services",
-   "shares": 93570133.0,
-   "officialWeight": 3.463568
+   "shares": 93736463.0,
+   "officialWeight": 3.481653
   },
   {
    "symbol": "LMT",
-   "weight": 3.069837,
+   "weight": 3.080709,
    "name": "LOCKHEED MARTIN",
    "sector": "Industrials",
-   "shares": 5782441.0,
-   "officialWeight": 3.047924
+   "shares": 5793102.0,
+   "officialWeight": 3.07189
   },
   {
    "symbol": "MO",
-   "weight": 3.028497,
+   "weight": 3.049656,
    "name": "ALTRIA GROUP INC",
    "sector": "Consumer Staples",
-   "shares": 47543037.0,
-   "officialWeight": 3.069984
+   "shares": 47627737.0,
+   "officialWeight": 3.030335
   },
   {
    "symbol": "BMY",
-   "weight": 3.025635,
+   "weight": 2.992347,
    "name": "BRISTOL MYERS SQUIBB",
    "sector": "Health Care",
-   "shares": 58162939.0,
-   "officialWeight": 3.007288
+   "shares": 58266353.0,
+   "officialWeight": 3.02746
   },
   {
    "symbol": "ADP",
-   "weight": 2.789685,
+   "weight": 2.791472,
    "name": "AUTOMATIC DATA PROCESSING INC",
    "sector": "Industrials",
-   "shares": 11311282.0,
-   "officialWeight": 2.750492
+   "shares": 11331520.0,
+   "officialWeight": 2.791399
   },
   {
    "symbol": "BX",
-   "weight": 2.119478,
+   "weight": 2.105971,
    "name": "BLACKSTONE",
    "sector": "Financials",
-   "shares": 21372210.0,
-   "officialWeight": 2.096004
+   "shares": 21410802.0,
+   "officialWeight": 2.120815
   },
   {
    "symbol": "CMCSA",
-   "weight": 1.985574,
+   "weight": 1.988617,
    "name": "COMCAST CLASS A",
    "sector": "Communication Services",
-   "shares": 100772438.0,
-   "officialWeight": 1.936385
-  },
-  {
-   "symbol": "EOG",
-   "weight": 1.946431,
-   "name": "EOG RESOURCES",
-   "sector": "Energy",
-   "shares": 14934565.0,
-   "officialWeight": 2.045894
+   "shares": 100951832.0,
+   "officialWeight": 1.986776
   },
   {
    "symbol": "UPS",
-   "weight": 1.932223,
+   "weight": 1.941941,
    "name": "UNITED PARCEL SERVICE INC CLASS B",
    "sector": "Industrials",
-   "shares": 21336308.0,
-   "officialWeight": 1.911326
+   "shares": 21374411.0,
+   "officialWeight": 1.933404
+  },
+  {
+   "symbol": "EOG",
+   "weight": 1.932083,
+   "name": "EOG RESOURCES",
+   "sector": "Energy",
+   "shares": 14961646.0,
+   "officialWeight": 1.947674
   },
   {
    "symbol": "SLB",
-   "weight": 1.824692,
+   "weight": 1.83659,
    "name": "SLB",
    "sector": "Energy",
-   "shares": 42258395.0,
-   "officialWeight": 1.879309
+   "shares": 42333661.0,
+   "officialWeight": 1.825798
   },
   {
    "symbol": "TGT",
-   "weight": 1.690702,
+   "weight": 1.664694,
    "name": "TARGET CORP",
    "sector": "Consumer Staples",
-   "shares": 12932274.0,
-   "officialWeight": 1.652166
+   "shares": 12955334.0,
+   "officialWeight": 1.69173
   },
   {
    "symbol": "FAST",
-   "weight": 1.417257,
+   "weight": 1.425448,
    "name": "FASTENAL",
    "sector": "Industrials",
-   "shares": 32672635.0,
-   "officialWeight": 1.403534
+   "shares": 32731199.0,
+   "officialWeight": 1.418132
   },
   {
    "symbol": "OKE",
-   "weight": 1.370749,
+   "weight": 1.375779,
    "name": "ONEOK",
    "sector": "Energy",
-   "shares": 17948605.0,
-   "officialWeight": 1.441794
+   "shares": 17980658.0,
+   "officialWeight": 1.371587
   },
   {
    "symbol": "DVN",
-   "weight": 1.257246,
+   "weight": 1.243457,
    "name": "DEVON ENERGY",
    "sector": "Energy",
-   "shares": 31320181.0,
-   "officialWeight": 1.351656
+   "shares": 31376367.0,
+   "officialWeight": 1.258025
   },
   {
    "symbol": "FITB",
-   "weight": 1.171674,
+   "weight": 1.161008,
    "name": "FIFTH THIRD BANCORP",
    "sector": "Financials",
-   "shares": 25821967.0,
-   "officialWeight": 1.151129
+   "shares": 25868189.0,
+   "officialWeight": 1.172395
   },
   {
    "symbol": "F",
-   "weight": 1.159914,
+   "weight": 1.144543,
    "name": "FORD MOTOR",
    "sector": "Consumer Discretionary",
-   "shares": 111522755.0,
-   "officialWeight": 1.130543
+   "shares": 111721113.0,
+   "officialWeight": 1.160614
   },
   {
    "symbol": "PAYX",
-   "weight": 0.868866,
+   "weight": 0.878819,
    "name": "PAYCHEX",
    "sector": "Industrials",
-   "shares": 9114157.0,
-   "officialWeight": 0.845643
-  },
-  {
-   "symbol": "ADM",
-   "weight": 0.85826,
-   "name": "ARCHER DANIELS MIDLAND",
-   "sector": "Consumer Staples",
-   "shares": 13722385.0,
-   "officialWeight": 0.873374
+   "shares": 9130936.0,
+   "officialWeight": 0.869444
   },
   {
    "symbol": "KMB",
-   "weight": 0.846088,
+   "weight": 0.824694,
    "name": "KIMBERLY CLARK",
    "sector": "Consumer Staples",
-   "shares": 9468823.0,
-   "officialWeight": 0.845797
+   "shares": 9486464.0,
+   "officialWeight": 0.846671
+  },
+  {
+   "symbol": "ADM",
+   "weight": 0.807726,
+   "name": "ARCHER DANIELS MIDLAND",
+   "sector": "Consumer Staples",
+   "shares": 13747407.0,
+   "officialWeight": 0.858816
   },
   {
    "symbol": "ARES",
-   "weight": 0.699853,
+   "weight": 0.685439,
    "name": "ARES MANAGEMENT CLASS A",
    "sector": "Financials",
-   "shares": 6376671.0,
-   "officialWeight": 0.676239
+   "shares": 6388170.0,
+   "officialWeight": 0.700293
   },
   {
    "symbol": "CINF",
-   "weight": 0.662864,
+   "weight": 0.671605,
    "name": "CINCINNATI FINANCIAL",
    "sector": "Financials",
-   "shares": 4369524.0,
-   "officialWeight": 0.655173
+   "shares": 4377795.0,
+   "officialWeight": 0.663339
   },
   {
    "symbol": "DRI",
-   "weight": 0.594517,
+   "weight": 0.591317,
    "name": "DARDEN RESTAURANTS INC",
    "sector": "Consumer Discretionary",
-   "shares": 3232202.0,
-   "officialWeight": 0.588904
+   "shares": 3238659.0,
+   "officialWeight": 0.595006
   },
   {
    "symbol": "HSY",
-   "weight": 0.588828,
+   "weight": 0.581897,
    "name": "HERSHEY FOODS",
    "sector": "Consumer Staples",
-   "shares": 4165488.0,
-   "officialWeight": 0.570874
+   "shares": 4173393.0,
+   "officialWeight": 0.589253
   },
   {
    "symbol": "RF",
-   "weight": 0.580071,
+   "weight": 0.578387,
    "name": "REGIONS FINANCIAL",
    "sector": "Financials",
-   "shares": 24257228.0,
-   "officialWeight": 0.573507
+   "shares": 24300428.0,
+   "officialWeight": 0.580423
   },
   {
    "symbol": "TROW",
-   "weight": 0.530643,
+   "weight": 0.537921,
    "name": "T ROWE PRICE GROUP",
    "sector": "Financials",
-   "shares": 6073234.0,
-   "officialWeight": 0.522184
+   "shares": 6084611.0,
+   "officialWeight": 0.531014
   },
   {
    "symbol": "PFG",
-   "weight": 0.516532,
+   "weight": 0.521058,
    "name": "PRINCIPAL FINANCIAL GROUP INC",
    "sector": "Financials",
-   "shares": 5546991.0,
-   "officialWeight": 0.51242
+   "shares": 5557472.0,
+   "officialWeight": 0.516901
   },
   {
    "symbol": "BR",
-   "weight": 0.493702,
+   "weight": 0.497378,
    "name": "BROADRIDGE FINANCIAL SOLUTIONS INC",
    "sector": "Industrials",
-   "shares": 3246654.0,
-   "officialWeight": 0.480441
-  },
-  {
-   "symbol": "BBY",
-   "weight": 0.447424,
-   "name": "BEST BUY",
-   "sector": "Consumer Discretionary",
-   "shares": 5637979.0,
-   "officialWeight": 0.446268
+   "shares": 3252348.0,
+   "officialWeight": 0.493988
   },
   {
    "symbol": "SNA",
-   "weight": 0.443691,
+   "weight": 0.444549,
    "name": "SNAP ON INC",
    "sector": "Industrials",
-   "shares": 1472357.0,
-   "officialWeight": 0.433347
+   "shares": 1475449.0,
+   "officialWeight": 0.444102
+  },
+  {
+   "symbol": "BBY",
+   "weight": 0.441475,
+   "name": "BEST BUY",
+   "sector": "Consumer Discretionary",
+   "shares": 5651194.0,
+   "officialWeight": 0.447947
   },
   {
    "symbol": "GIS",
-   "weight": 0.436724,
+   "weight": 0.432514,
    "name": "GENERAL MILLS INC",
    "sector": "Consumer Staples",
-   "shares": 15225107.0,
-   "officialWeight": 0.432032
+   "shares": 15249734.0,
+   "officialWeight": 0.436917
   },
   {
    "symbol": "EWBC",
-   "weight": 0.428777,
+   "weight": 0.430653,
    "name": "EAST WEST BANCORP",
    "sector": "Financials",
-   "shares": 3901204.0,
-   "officialWeight": 0.422306
+   "shares": 3908118.0,
+   "officialWeight": 0.429033
   },
   {
    "symbol": "DINO",
-   "weight": 0.405736,
+   "weight": 0.416218,
    "name": "HF SINCLAIR",
    "sector": "Energy",
-   "shares": 4402039.0,
-   "officialWeight": 0.418928
+   "shares": 4411862.0,
+   "officialWeight": 0.406164
   },
   {
    "symbol": "APA",
-   "weight": 0.401994,
+   "weight": 0.397291,
    "name": "APA",
    "sector": "Energy",
-   "shares": 9975391.0,
-   "officialWeight": 0.43603
+   "shares": 9993428.0,
+   "officialWeight": 0.402249
   },
   {
    "symbol": "WSO",
-   "weight": 0.26473,
+   "weight": 0.263319,
    "name": "WATSCO",
    "sector": "Industrials",
-   "shares": 1012627.0,
-   "officialWeight": 0.254379
+   "shares": 1015126.0,
+   "officialWeight": 0.265072
   },
   {
    "symbol": "FNF",
-   "weight": 0.252381,
+   "weight": 0.250331,
    "name": "FIDELITY NATIONAL FINANCIAL INC",
    "sector": "Financials",
-   "shares": 7248680.0,
-   "officialWeight": 0.243001
+   "shares": 7267432.0,
+   "officialWeight": 0.252738
   },
   {
    "symbol": "AFG",
-   "weight": 0.250639,
+   "weight": 0.249965,
    "name": "AMERICAN FINANCIAL GROUP",
    "sector": "Financials",
-   "shares": 1956813.0,
-   "officialWeight": 0.249167
+   "shares": 1963133.0,
+   "officialWeight": 0.251154
   },
   {
    "symbol": "BAH",
-   "weight": 0.24867,
+   "weight": 0.248472,
    "name": "BOOZ ALLEN HAMILTON HOLDING CLASS",
    "sector": "Industrials",
-   "shares": 3422547.0,
-   "officialWeight": 0.250629
+   "shares": 3430998.0,
+   "officialWeight": 0.248991
   },
   {
    "symbol": "COLB",
-   "weight": 0.207499,
+   "weight": 0.207109,
    "name": "COLUMBIA BANKING SYSTEM INC",
    "sector": "Financials",
-   "shares": 8046608.0,
-   "officialWeight": 0.204427
+   "shares": 8069476.0,
+   "officialWeight": 0.207844
   },
   {
    "symbol": "ORI",
-   "weight": 0.203142,
+   "weight": 0.204567,
    "name": "OLD REPUBLIC INTERNATIONAL",
    "sector": "Financials",
-   "shares": 6321560.0,
-   "officialWeight": 0.201511
+   "shares": 6338525.0,
+   "officialWeight": 0.203449
   },
   {
    "symbol": "ALV",
-   "weight": 0.19212,
+   "weight": 0.188973,
    "name": "AUTOLIV",
    "sector": "Consumer Discretionary",
-   "shares": 1896863.0,
-   "officialWeight": 0.184505
+   "shares": 1902403.0,
+   "officialWeight": 0.192455
   },
   {
    "symbol": "ERIE",
-   "weight": 0.166246,
+   "weight": 0.165577,
    "name": "ERIE INDEMNITY CLASS A",
    "sector": "Financials",
-   "shares": 735226.0,
-   "officialWeight": 0.159037
+   "shares": 737784.0,
+   "officialWeight": 0.166629
   },
   {
    "symbol": "M",
-   "weight": 0.150265,
+   "weight": 0.149209,
    "name": "MACYS",
    "sector": "Consumer Discretionary",
-   "shares": 7482091.0,
-   "officialWeight": 0.149282
-  },
-  {
-   "symbol": "MTN",
-   "weight": 0.129602,
-   "name": "VAIL RESORTS",
-   "sector": "Consumer Discretionary",
-   "shares": 1014127.0,
-   "officialWeight": 0.12742
+   "shares": 7507987.0,
+   "officialWeight": 0.150608
   },
   {
    "symbol": "MSM",
-   "weight": 0.12879,
+   "weight": 0.130611,
    "name": "MSC INDUSTRIAL CLASS A",
    "sector": "Industrials",
-   "shares": 1304327.0,
-   "officialWeight": 0.130626
+   "shares": 1304593.0,
+   "officialWeight": 0.128665
+  },
+  {
+   "symbol": "MTN",
+   "weight": 0.129955,
+   "name": "VAIL RESORTS",
+   "sector": "Consumer Discretionary",
+   "shares": 1018220.0,
+   "officialWeight": 0.129972
   },
   {
    "symbol": "MUR",
-   "weight": 0.127322,
+   "weight": 0.126155,
    "name": "MURPHY OIL",
    "sector": "Energy",
-   "shares": 3840780.0,
-   "officialWeight": 0.13969
+   "shares": 3841564.0,
+   "officialWeight": 0.127199
   },
   {
    "symbol": "OZK",
-   "weight": 0.123996,
+   "weight": 0.12292,
    "name": "BANK OZK",
    "sector": "Financials",
-   "shares": 2890980.0,
-   "officialWeight": 0.121175
+   "shares": 2891568.0,
+   "officialWeight": 0.123875
   },
   {
    "symbol": "NXST",
-   "weight": 0.120977,
+   "weight": 0.122695,
    "name": "NEXSTAR MEDIA GROUP INC",
    "sector": "Communication Services",
-   "shares": 825499.0,
-   "officialWeight": 0.117116
-  },
-  {
-   "symbol": "MC",
-   "weight": 0.10588,
-   "name": "MOELIS CLASS A",
-   "sector": "Financials",
-   "shares": 2103460.0,
-   "officialWeight": 0.101987
-  },
-  {
-   "symbol": "RHI",
-   "weight": 0.105562,
-   "name": "ROBERT HALF INC",
-   "sector": "Industrials",
-   "shares": 2856455.0,
-   "officialWeight": 0.10337
+   "shares": 825667.0,
+   "officialWeight": 0.12086
   },
   {
    "symbol": "FHI",
-   "weight": 0.10479,
+   "weight": 0.104995,
    "name": "FEDERATED HERMES INC CLASS B",
    "sector": "Financials",
-   "shares": 2029239.0,
-   "officialWeight": 0.098204
+   "shares": 2029645.0,
+   "officialWeight": 0.104689
+  },
+  {
+   "symbol": "RHI",
+   "weight": 0.104488,
+   "name": "ROBERT HALF INC",
+   "sector": "Industrials",
+   "shares": 2871110.0,
+   "officialWeight": 0.105979
+  },
+  {
+   "symbol": "MC",
+   "weight": 0.104183,
+   "name": "MOELIS CLASS A",
+   "sector": "Financials",
+   "shares": 2113932.0,
+   "officialWeight": 0.106282
   },
   {
    "symbol": "CWEN",
-   "weight": 0.096248,
+   "weight": 0.099099,
    "name": "CLEARWAY ENERGY INC CLASS C",
    "sector": "Utilities",
-   "shares": 3439537.0,
-   "officialWeight": 0.091168
+   "shares": 3458548.0,
+   "officialWeight": 0.096666
   },
   {
    "symbol": "KFY",
-   "weight": 0.094285,
+   "weight": 0.092821,
    "name": "KORN FERRY",
    "sector": "Industrials",
-   "shares": 1464948.0,
-   "officialWeight": 0.092802
+   "shares": 1465242.0,
+   "officialWeight": 0.094193
   },
   {
    "symbol": "CVBF",
-   "weight": 0.090566,
+   "weight": 0.091121,
    "name": "CVB FINANCIAL CORP",
    "sector": "Financials",
-   "shares": 4747601.0,
-   "officialWeight": 0.088713
-  },
-  {
-   "symbol": "GVMXX",
-   "weight": 0.090446,
-   "name": "SSC GOVERNMENT MM GVMXX",
-   "sector": "",
-   "shares": 109571687.58,
-   "officialWeight": 0.090675
+   "shares": 4775046.0,
+   "officialWeight": 0.090983
   },
   {
    "symbol": "PAG",
-   "weight": 0.088955,
+   "weight": 0.089264,
    "name": "PENSKE AUTOMOTIVE GROUP VOTING INC",
    "sector": "Consumer Discretionary",
-   "shares": 505345.0,
-   "officialWeight": 0.088707
+   "shares": 505443.0,
+   "officialWeight": 0.088868
   },
   {
    "symbol": "APAM",
-   "weight": 0.063825,
+   "weight": 0.065262,
    "name": "ARTISAN PARTNERS ASSET MANAGEMENT",
    "sector": "Financials",
-   "shares": 2011993.0,
-   "officialWeight": 0.060906
+   "shares": 2028944.0,
+   "officialWeight": 0.064287
   },
   {
    "symbol": "BANR",
-   "weight": 0.056828,
+   "weight": 0.057193,
    "name": "BANNER CORP",
    "sector": "Financials",
-   "shares": 962602.0,
-   "officialWeight": 0.055132
-  },
-  {
-   "symbol": "IPAR",
-   "weight": 0.051409,
-   "name": "INTERPARFUMS INC",
-   "sector": "Consumer Staples",
-   "shares": 519602.0,
-   "officialWeight": 0.050038
-  },
-  {
-   "symbol": "MZTI",
-   "weight": 0.050792,
-   "name": "MARZETTI",
-   "sector": "Consumer Staples",
-   "shares": 554693.0,
-   "officialWeight": 0.050374
+   "shares": 971484.0,
+   "officialWeight": 0.057286
   },
   {
    "symbol": "OFG",
-   "weight": 0.050549,
+   "weight": 0.051314,
    "name": "OFG BANCORP",
    "sector": "Financials",
-   "shares": 1203811.0,
-   "officialWeight": 0.04982
+   "shares": 1204049.0,
+   "officialWeight": 0.0505
+  },
+  {
+   "symbol": "MZTI",
+   "weight": 0.050734,
+   "name": "MARZETTI",
+   "sector": "Consumer Staples",
+   "shares": 554805.0,
+   "officialWeight": 0.050742
+  },
+  {
+   "symbol": "IPAR",
+   "weight": 0.050642,
+   "name": "INTERPARFUMS INC",
+   "sector": "Consumer Staples",
+   "shares": 519700.0,
+   "officialWeight": 0.051358
   },
   {
    "symbol": "CNS",
-   "weight": 0.049433,
+   "weight": 0.04899,
    "name": "COHEN & STEERS INC",
    "sector": "Financials",
-   "shares": 805142.0,
-   "officialWeight": 0.048292
+   "shares": 805296.0,
+   "officialWeight": 0.049385
   },
   {
    "symbol": "CHCO",
-   "weight": 0.04796,
+   "weight": 0.047524,
    "name": "CITY HOLDING",
    "sector": "Financials",
-   "shares": 399406.0,
-   "officialWeight": 0.047162
+   "shares": 399476.0,
+   "officialWeight": 0.047912
   },
   {
    "symbol": "WU",
-   "weight": 0.046229,
+   "weight": 0.046322,
    "name": "WESTERN UNION",
    "sector": "Financials",
-   "shares": 8903811.0,
-   "officialWeight": 0.045388
+   "shares": 8905645.0,
+   "officialWeight": 0.046185
   },
   {
    "symbol": "AGM",
-   "weight": 0.045281,
+   "weight": 0.044709,
    "name": "FEDERAL AGRICULTURAL MORTGAGE NON",
    "sector": "Financials",
-   "shares": 265584.0,
-   "officialWeight": 0.044431
-  },
-  {
-   "symbol": "NSP",
-   "weight": 0.04475,
-   "name": "INSPERITY",
-   "sector": "Industrials",
-   "shares": 1019425.0,
-   "officialWeight": 0.041067
+   "shares": 265626.0,
+   "officialWeight": 0.045235
   },
   {
    "symbol": "GABC",
-   "weight": 0.044452,
+   "weight": 0.044263,
    "name": "GERMAN AMERICAN BANCORP INC",
    "sector": "Financials",
-   "shares": 1072108.0,
-   "officialWeight": 0.043429
+   "shares": 1072318.0,
+   "officialWeight": 0.044409
   },
   {
    "symbol": "STBA",
-   "weight": 0.043206,
+   "weight": 0.042933,
    "name": "S AND T BANCORP INC",
    "sector": "Financials",
-   "shares": 1006007.0,
-   "officialWeight": 0.042083
+   "shares": 1006203.0,
+   "officialWeight": 0.043164
+  },
+  {
+   "symbol": "NSP",
+   "weight": 0.042411,
+   "name": "INSPERITY",
+   "sector": "Industrials",
+   "shares": 1019635.0,
+   "officialWeight": 0.044707
   },
   {
    "symbol": "NBHC",
-   "weight": 0.039777,
+   "weight": 0.03951,
    "name": "NATIONAL BANK HOLDINGS CORP CLASS",
    "sector": "Financials",
-   "shares": 1266095.0,
-   "officialWeight": 0.039217
+   "shares": 1266347.0,
+   "officialWeight": 0.039738
   },
   {
    "symbol": "SRCE",
-   "weight": 0.037421,
+   "weight": 0.037207,
    "name": "1ST SOURCE",
    "sector": "Financials",
-   "shares": 508117.0,
-   "officialWeight": 0.036757
+   "shares": 508215.0,
+   "officialWeight": 0.037385
   },
   {
    "symbol": "LKFN",
-   "weight": 0.036207,
+   "weight": 0.036168,
    "name": "LAKELAND FINANCIAL CORP",
    "sector": "Financials",
-   "shares": 709298.0,
-   "officialWeight": 0.035271
+   "shares": 709438.0,
+   "officialWeight": 0.036171
   },
   {
    "symbol": "BKE",
-   "weight": 0.034175,
+   "weight": 0.033878,
    "name": "BUCKLE",
    "sector": "Consumer Discretionary",
-   "shares": 875124.0,
-   "officialWeight": 0.033588
+   "shares": 880737.0,
+   "officialWeight": 0.034354
   },
   {
    "symbol": "FLO",
-   "weight": 0.033778,
+   "weight": 0.03381,
    "name": "FLOWERS FOODS INC",
    "sector": "Consumer Staples",
-   "shares": 6044378.0,
-   "officialWeight": 0.031362
+   "shares": 6045624.0,
+   "officialWeight": 0.033745
   },
   {
    "symbol": "WEN",
-   "weight": 0.027421,
+   "weight": 0.02769,
    "name": "WENDYS",
    "sector": "Consumer Discretionary",
-   "shares": 4575726.0,
-   "officialWeight": 0.027301
+   "shares": 4576664.0,
+   "officialWeight": 0.027395
   },
   {
    "symbol": "PFBC",
-   "weight": 0.02739,
+   "weight": 0.027449,
    "name": "PREFERRED BANK",
    "sector": "Financials",
-   "shares": 310308.0,
-   "officialWeight": 0.02713
+   "shares": 310364.0,
+   "officialWeight": 0.027362
   },
   {
    "symbol": "CNA",
-   "weight": 0.02446,
+   "weight": 0.02431,
    "name": "CNA FINANCIAL CORP",
    "sector": "Financials",
-   "shares": 618357.0,
-   "officialWeight": 0.02491
+   "shares": 618483.0,
+   "officialWeight": 0.024436
   },
   {
    "symbol": "CPF",
-   "weight": 0.023508,
+   "weight": 0.023401,
    "name": "CENTRAL PACIFIC FINANCIAL CORP",
    "sector": "Financials",
-   "shares": 730794.0,
-   "officialWeight": 0.022969
+   "shares": 730934.0,
+   "officialWeight": 0.023485
   },
   {
    "symbol": "HAFC",
-   "weight": 0.023127,
+   "weight": 0.023098,
    "name": "HANMI FINANCIAL CORP",
    "sector": "Financials",
-   "shares": 839859.0,
-   "officialWeight": 0.022623
+   "shares": 840027.0,
+   "officialWeight": 0.023105
+  },
+  {
+   "symbol": "GVMXX",
+   "weight": 0.021686,
+   "name": "SSC GOVERNMENT MM GVMXX",
+   "sector": "",
+   "shares": 26057940.17,
+   "officialWeight": 0.021484
   },
   {
    "symbol": "ORRF",
-   "weight": 0.021197,
+   "weight": 0.02095,
    "name": "ORRSTOWN FINANCIAL SERVICES INC",
    "sector": "Financials",
-   "shares": 567257.0,
-   "officialWeight": 0.020617
+   "shares": 567369.0,
+   "officialWeight": 0.021177
   },
   {
    "symbol": "THFF",
-   "weight": 0.019675,
+   "weight": 0.019633,
    "name": "FIRST FINANCIAL CORPORATION CORP",
    "sector": "Financials",
-   "shares": 303720.0,
-   "officialWeight": 0.01924
+   "shares": 303776.0,
+   "officialWeight": 0.019656
   },
   {
    "symbol": "IBCP",
-   "weight": 0.019531,
+   "weight": 0.019342,
    "name": "INDEPENDENT BANK CORP",
    "sector": "Financials",
-   "shares": 633495.0,
-   "officialWeight": 0.019171
+   "shares": 633621.0,
+   "officialWeight": 0.019512
   },
   {
    "symbol": "VRTS",
-   "weight": 0.017421,
+   "weight": 0.017424,
    "name": "VIRTUS INVESTMENT PARTNERS",
    "sector": "Financials",
-   "shares": 173804.0,
-   "officialWeight": 0.017005
-  },
-  {
-   "symbol": "CCBG",
-   "weight": 0.016704,
-   "name": "CAPITAL CITY BANK INC",
-   "sector": "Financials",
-   "shares": 389522.0,
-   "officialWeight": 0.016394
+   "shares": 173832.0,
+   "officialWeight": 0.017404
   },
   {
    "symbol": "USD",
-   "weight": 0.013484,
+   "weight": 0.017399,
    "name": "US DOLLAR",
    "sector": "",
-   "shares": 16334735.84,
-   "officialWeight": 0.013518
+   "shares": 20906927.0,
+   "officialWeight": 0.017237
+  },
+  {
+   "symbol": "CCBG",
+   "weight": 0.016626,
+   "name": "CAPITAL CITY BANK INC",
+   "sector": "Financials",
+   "shares": 389592.0,
+   "officialWeight": 0.016687
   },
   {
    "symbol": "EBF",
-   "weight": 0.01191,
+   "weight": 0.011767,
    "name": "ENNIS INC",
    "sector": "Industrials",
-   "shares": 681253.0,
-   "officialWeight": 0.012053
+   "shares": 681393.0,
+   "officialWeight": 0.011899
   },
   {
    "symbol": "ETD",
-   "weight": 0.00992,
+   "weight": 0.0096,
    "name": "ETHAN ALLEN INTERIORS",
    "sector": "Consumer Discretionary",
-   "shares": 569284.0,
-   "officialWeight": 0.009592
+   "shares": 569396.0,
+   "officialWeight": 0.00991
   },
   {
    "symbol": "OXM",
-   "weight": 0.009335,
+   "weight": 0.009275,
    "name": "OXFORD INDUSTRIES INC",
    "sector": "Consumer Discretionary",
-   "shares": 395008.0,
-   "officialWeight": 0.009218
+   "shares": 395078.0,
+   "officialWeight": 0.009326
   },
   {
    "symbol": "AMSF",
-   "weight": 0.009016,
+   "weight": 0.008999,
    "name": "AMERISAFE INC",
    "sector": "Financials",
-   "shares": 527653.0,
-   "officialWeight": 0.00913
+   "shares": 527751.0,
+   "officialWeight": 0.009005
   },
   {
    "symbol": "FAZ6",
    "weight": 0.0,
    "name": "S&P MID 400 EMINI DEC 26",
    "sector": "",
-   "shares": 14200.0,
+   "shares": 7200.0,
    "officialWeight": 0.0
   },
   {
@@ -820,7 +820,7 @@
    "weight": 0.0,
    "name": "DJIA MINI e-CBOT DEC 26",
    "sector": "",
-   "shares": 5595.0,
+   "shares": 2915.0,
    "officialWeight": 0.0
   }
  ]
