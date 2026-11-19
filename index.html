@@ -206,9 +206,10 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 .legend b{color:var(--ink);font-weight:700}
 .trtip i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
   .scroll-hint { display: none; margin: 10px 0 6px; text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); }
-  @media (max-width: 530px) { .scroll-hint.sh-530 { display: block; } }
-  @media (max-width: 710px) { .scroll-hint.sh-710 { display: block; } }
-  @media (max-width: 840px) { .scroll-hint.sh-840 { display: block; } }
+  @media (max-width: 528px) { .scroll-hint.sh-528 { display: block; } }
+  @media (max-width: 839px) { .scroll-hint.sh-839 { display: block; } }
+  @media (max-width: 704px) { .scroll-hint.sh-704 { display: block; } }
+  @media print { .scroll-hint { display: none !important; } }
 </style>
 
 </head>
@@ -289,7 +290,7 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
         <button id="u-usd" aria-pressed="true">USD</button><button id="u-krw" aria-pressed="false">원화 세전</button><button id="u-net" aria-pressed="false">원화 세후</button>
       </div>
     </div>
-    <p class="scroll-hint sh-530" aria-hidden="true">← 옆으로 밀어 보세요 →</p>
+    <p class="scroll-hint sh-528" aria-hidden="true">← 옆으로 밀어 보세요 →</p>
     <div class="panel scroll"><table id="qtable"></table></div>
     <span class="cap" id="qcap"></span>
   </section>
@@ -335,10 +336,10 @@ tr.sum td{border-top:1px solid var(--ink);font-weight:700}
 
   <section class="sec">
     <div class="sec-head"><h2>국내상장 SCHD형 ETF 비교</h2><span class="cap" id="krAsOf"></span></div>
-    <p class="scroll-hint sh-840" aria-hidden="true">← 옆으로 밀어 보세요 →</p>
+    <p class="scroll-hint sh-839" aria-hidden="true">← 옆으로 밀어 보세요 →</p>
     <div class="panel scroll"><table id="krtable"></table></div>
     <span class="cap" id="krCostCap"></span>
-    <p class="scroll-hint sh-710" aria-hidden="true">← 옆으로 밀어 보세요 →</p>
+    <p class="scroll-hint sh-704" aria-hidden="true">← 옆으로 밀어 보세요 →</p>
     <div class="panel"><div class="scroll"><table id="krq"></table></div><button type="button" class="htoggle" id="krqToggle" aria-expanded="false"></button></div>
     <span class="cap">12개월 분배율 = 12개월 분배금 합계 ÷ 기준 가격. 기준 가격은 국내 ETF는 최근 분배 시점 1좌 가격(최근 분배금 ÷ 회차 분배율로 역산), SCHD는 최근 배당락일 종가입니다. 회차별 분배율을 더한 값이 아닙니다. SCHD 행은 기준일 이전 마지막 배당락까지 4회라, 위쪽 요약의 TTM(최신 분배 포함)과 기준일 이후 분배만큼 다를 수 있습니다. 표의 작은 숫자는 기준 가격입니다.</span>
     <span class="cap">네 종목 모두 같은 지수(Dow Jones U.S. Dividend 100)를 따라가며 매월 분배합니다. 분기 합계는 분배 기준일이 속한 분기로 묶었습니다. 작은 숫자는 작년 같은 분기 대비이며, 분배 횟수가 다르면 계산하지 않고 이유를 표시합니다.</span>
